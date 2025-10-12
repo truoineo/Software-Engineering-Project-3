@@ -1,0 +1,30 @@
+{
+  "Court A": {
+    "type": "Basketball",
+    "capacity": 4,
+    "timeslots": {
+      "2025-10-13T09:00": {
+        "players": ["2023001"],
+        "status": "available"
+      },
+      "2025-10-13T11:00": {
+        "players": [],
+        "status": "available"
+      },
+      "2025-10-13T14:00": {
+        "players": ["2023001", "2023002", "2023003", "2023004"],
+        "status": "full"
+      }
+    }
+  },
+  "Court B": {
+    "type": "Tennis",
+    "capacity": 4,
+    "timeslots": {
+      "2025-10-13T18:00": {
+        "players": ["2023002", "2023003"],
+        "status": "available"
+      }
+    }
+  }
+}

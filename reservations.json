@@ -1,0 +1,28 @@
+{
+  "1": {
+    "name": "Morning Basketball",
+    "timeslot": "2025-10-13T09:00",
+    "court": "Court A",
+    "players": [
+      "2023001"
+    ],
+    "maxPlayers": 4
+  },
+  "2": {
+    "name": "Evening Tennis",
+    "timeslot": "2025-10-13T18:00",
+    "court": "Court B",
+    "players": [
+      "2023002",
+      "2023003"
+    ],
+    "maxPlayers": 4
+  },
+  "3": {
+    "name": "Afternoon Volleyball",
+    "timeslot": "2025-10-13T14:00",
+    "court": "Court C",
+    "players": [],
+    "maxPlayers": 6
+  }
+}
