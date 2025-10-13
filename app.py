@@ -174,6 +174,22 @@ def list_available_times(location: str, duration_min: int, date_text: str):
     return times
 
 
+def list_all_times(date_text: str):
+    """Return all 30-minute times for the given date (00:00-23:30)."""
+    try:
+        date_dt = datetime.strptime((date_text or "").strip() or datetime.now().strftime("%Y-%m-%d"), "%Y-%m-%d")
+    except Exception:
+        date_dt = datetime.now()
+    start_of_day = date_dt.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_day = start_of_day + timedelta(days=1)
+    times = []
+    cur = start_of_day
+    while cur < end_of_day:
+        times.append(cur.strftime("%H:%M"))
+        cur += timedelta(minutes=SLOT_MINUTES)
+    return times
+
+
 def list_rooms_table():
     rooms = _load_rooms()
     table = []
@@ -435,13 +451,8 @@ with gr.Blocks(title="Scheduling App", css=CUSTOM_CSS) as demo:
 
     # Update available start slots when location or duration changes
     def compute_slots(loc, dur, date_str):
-        try:
-            d = int(dur)
-        except Exception:
-            d = MAX_DURATION_MIN
-        if not loc:
-            return gr.update(choices=[], value=None)
-        return gr.update(choices=list_available_times(loc, d, date_str), value=None)
+        # Populate all 30-minute options for the selected date
+        return gr.update(choices=list_all_times(date_str), value=None)
 
     room_location.change(compute_slots, inputs=[room_location, room_duration, room_date], outputs=[room_time])
     room_duration.change(compute_slots, inputs=[room_location, room_duration, room_date], outputs=[room_time])
