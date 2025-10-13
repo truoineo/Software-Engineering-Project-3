@@ -23,7 +23,7 @@ CUSTOM_CSS = """
 /* Room label grows to fill row */
 .room-label { text-align: left; font-size: 18px; padding: 10px 14px; flex: 1 1 auto; }
 
-/* Make Join button smaller, green, and not full-width */
+/* Make Join button smaller, orange, and not full-width */
 .room-join-btn { 
   flex: 0 0 auto !important; 
   margin-left: auto; 
@@ -194,8 +194,8 @@ def list_rooms_table():
             "end_time": end_str,
             "duration_min": dur,
             "owner_id": r.get("owner_id"),
-            "capacity": r.get("capacity"),
-            "occupied": f"{len(r.get('participants', []))}/{r.get('capacity', 0)}",
+            "privacy": (r.get("privacy") or "public").lower(),
+            "participants": len(r.get('participants', [])),
         })
     return table
 
@@ -205,7 +205,8 @@ def list_room_choices():
     choices = []
     for r in rooms:
         dur = int(r.get("duration", MAX_DURATION_MIN))
-        label = f"{r.get('name')} @ {r.get('time','')} ({dur}m) ({len(r.get('participants', []))}/{r.get('capacity', 0)})"
+        privacy = (r.get("privacy") or "public").capitalize()
+        label = f"{r.get('name')} @ {r.get('time','')} ({dur}m) [{privacy}]"
         choices.append((label, r.get("id")))
     return choices
 
@@ -219,7 +220,8 @@ def login(student_id):
 
 def _format_room_label(r):
     dur = int(r.get("duration", MAX_DURATION_MIN))
-    return f"{r.get('name','')}  @ {r.get('time','')}  ({dur}m)  ({len(r.get('participants', []))}/{r.get('capacity', 0)})"
+    privacy = (r.get("privacy") or "public").capitalize()
+    return f"{r.get('name','')}  @ {r.get('time','')}  ({dur}m)  [{privacy}]"
 
 
 def refresh_join_buttons():
@@ -240,28 +242,30 @@ def refresh_join_buttons():
     return (*label_updates, *button_updates, ids)
 
 
-def create_room(owner_id, name, location, date_text, time_text, duration_min, capacity):
+def refresh_rooms():
+    # Simple alias used by join handlers to refresh UI
+    return refresh_join_buttons()
+
+
+def create_room(owner_id, name, location, date_text, time_text, duration_min, privacy):
     owner_id = (owner_id or "").strip()
     name = (name or "").strip()
     location = (location or "").strip()
     date_text = (date_text or "").strip()
     time_text = (time_text or "").strip()
+    privacy = (privacy or "public").strip().lower()
 
     try:
         duration_min = int(duration_min)
     except Exception:
         duration_min = MAX_DURATION_MIN
-    try:
-        capacity = int(capacity)
-    except Exception:
-        capacity = 0
 
     if not owner_id:
         return (gr.update(value="Missing owner Student ID."),)
     if not name:
         return (gr.update(value="Room name is required."),)
-    if capacity <= 0:
-        return (gr.update(value="Capacity must be a positive integer."),)
+    if privacy not in ("public", "private"):
+        return (gr.update(value="Privacy must be 'Public' or 'Private'."),)
     # Require a valid location selection
     if location not in LOCATION_OPTIONS:
         return (gr.update(value="Please select a valid location."),)
@@ -293,16 +297,16 @@ def create_room(owner_id, name, location, date_text, time_text, duration_min, ca
         "id": str(uuid.uuid4()),
         "name": name,
         "owner_id": owner_id,
-        "capacity": capacity,
         "participants": [owner_id],
         "time": start_dt.strftime(TIME_FMT),
         "duration": duration_min,
         "location": location,
+        "privacy": privacy,
     }
     rooms.append(room)
     _save_rooms(rooms)
 
-    success_msg = f"Created room '{name}' on {start_dt.strftime('%Y-%m-%d')} at {start_dt.strftime('%H:%M')} ({duration_min}m), cap {capacity}."
+    success_msg = f"Created {privacy.capitalize()} room '{name}' on {start_dt.strftime('%Y-%m-%d')} at {start_dt.strftime('%H:%M')} ({duration_min}m)."
     return (gr.update(value=success_msg),)
 
 
@@ -322,14 +326,15 @@ def join_room(student_id, room_id):
         return gr.update(value="Room not found (refresh and try again)."), *refresh_rooms()
 
     participants = target.get("participants", [])
-    capacity = int(target.get("capacity", 0))
+    privacy = (target.get("privacy") or "public").lower()
     sid = str(student_id).strip()
 
     if sid in participants:
         return gr.update(value="You have already joined this room."), *refresh_rooms()
 
-    if len(participants) >= capacity:
-        return gr.update(value="Room is full."), *refresh_rooms()
+    # Block joins to private rooms unless you are the owner
+    if privacy == "private" and sid != target.get("owner_id"):
+        return gr.update(value="This room is private."), *refresh_rooms()
 
     participants.append(sid)
     target["participants"] = participants
@@ -385,7 +390,7 @@ with gr.Blocks(title="Scheduling App", css=CUSTOM_CSS) as demo:
 
             with gr.Row():
                 room_name = gr.Textbox(label="Room Name", placeholder="e.g., Soccer Field A")
-                room_capacity = gr.Number(label="Capacity", value=4, precision=0)
+                room_privacy = gr.Radio(["Public", "Private"], value="Public", label="Visibility")
             with gr.Row():
                 room_location = gr.Dropdown(
                     choices=LOCATION_OPTIONS,
@@ -424,7 +429,7 @@ with gr.Blocks(title="Scheduling App", css=CUSTOM_CSS) as demo:
     # Create room submit
     create_evt = create_submit.click(
         create_room,
-        inputs=[student_state, room_name, room_location, room_date, room_time, room_duration, room_capacity],
+        inputs=[student_state, room_name, room_location, room_date, room_time, room_duration, room_privacy],
         outputs=[create_status],
     )
 
