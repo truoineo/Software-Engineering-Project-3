@@ -17,6 +17,10 @@ SLOTS_LOOKAHEAD_HOURS = 24
 SLOTS_LOOKAHEAD_DAYS = 7
 MAX_ROOM_BUTTONS = 20
 CUSTOM_CSS = """
+/* Make app use full screen width */
+.gradio-container { max-width: 100% !important; width: 100% !important; padding-left: 16px !important; padding-right: 16px !important; }
+html, body { margin: 0 !important; width: 100% !important; }
+
 .room-option button { font-size: 18px; padding: 14px 18px; width: 100%; text-align: left; justify-content: flex-start; }
 .room-option { width: 100%; }
 
@@ -46,6 +50,42 @@ CUSTOM_CSS = """
   border: 1px solid #ea580c !important;
 }
 .room-join-btn button:hover { background: #ea580c !important; }
+
+/* Circular profile icon button */
+.profile-icon-btn { display: flex; justify-content: flex-end; }
+.profile-icon-btn button {
+  width: 40px; height: 40px;
+  border-radius: 9999px;
+  padding: 0; margin-left: 8px;
+  font-weight: 700; font-size: 16px;
+  background: #111827; /* neutral dark */
+  color: #ffffff;
+  border: 1px solid #374151;
+}
+.profile-icon-btn button:hover { background: #0b1220; }
+
+/* Card-like boxes for room rows */
+.room-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+/* Boxed area for profile page */
+.profile-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+
+/* Keep Create button compact */
+.top-create-btn button {
+  width: 140px;
+}
 """
 LOCATION_OPTIONS = [
     "Soccer Field A",
@@ -247,15 +287,18 @@ def refresh_join_buttons():
 
     label_updates = []
     button_updates = []
+    row_updates = []
     for i in range(MAX_ROOM_BUTTONS):
         if i < len(labels):
             label_updates.append(gr.update(value=labels[i], visible=True))
             button_updates.append(gr.update(visible=True))
+            row_updates.append(gr.update(visible=True))
         else:
             label_updates.append(gr.update(value="", visible=False))
             button_updates.append(gr.update(visible=False))
+            row_updates.append(gr.update(visible=False))
 
-    return (*label_updates, *button_updates, ids)
+    return (*label_updates, *button_updates, ids, *row_updates)
 
 
 def refresh_rooms():
@@ -379,22 +422,27 @@ with gr.Blocks(title="Scheduling App", css=CUSTOM_CSS) as demo:
                 with gr.Column(scale=5):
                     gr.Markdown("### Available Rooms")
                 with gr.Column(scale=1):
-                    goto_create_btn = gr.Button("Create", variant="primary")
+                    goto_create_btn = gr.Button("Create", variant="primary", elem_classes=["top-create-btn"])
+                with gr.Column(scale=1):
+                    goto_profile_btn = gr.Button("👤", elem_classes=["profile-icon-btn"])
 
             # Large per-room rows: label (left) + Join button (right)
             room_labels = []
             room_join_btns = []
+            room_rows = []
             with gr.Column():
                 for _i in range(MAX_ROOM_BUTTONS):
-                    with gr.Row():
-                        room_labels.append(gr.Markdown("", visible=False, elem_classes=["room-label"]))
-                        room_join_btns.append(gr.Button("Join", visible=False, elem_classes=["room-join-btn"], variant="primary"))
+                    with gr.Group(elem_classes=["room-card"], visible=False) as _row_group:
+                        with gr.Row():
+                            room_labels.append(gr.Markdown("", visible=False, elem_classes=["room-label"]))
+                            room_join_btns.append(gr.Button("Join", visible=False, elem_classes=["room-join-btn"], variant="primary"))
+                    room_rows.append(_row_group)
             room_ids_state = gr.State([])
             join_status = gr.Markdown("")
 
             # Auto-refresh available rooms every 5 seconds
             auto_timer = gr.Timer(5.0)
-            auto_timer.tick(fn=refresh_join_buttons, inputs=None, outputs=[*room_labels, *room_join_btns, room_ids_state])
+            auto_timer.tick(fn=refresh_join_buttons, inputs=None, outputs=[*room_labels, *room_join_btns, room_ids_state, *room_rows])
 
         # Create page (separate view)
         with gr.Group(visible=False) as create_page:
@@ -428,6 +476,29 @@ with gr.Blocks(title="Scheduling App", css=CUSTOM_CSS) as demo:
                 create_submit = gr.Button("Save", variant="primary")
             create_status = gr.Markdown("")
 
+        # Profile page (separate view)
+        with gr.Group(visible=False) as profile_page:
+            with gr.Row():
+                with gr.Column(scale=5):
+                    gr.Markdown("### Profile")
+                with gr.Column(scale=1):
+                    back_from_profile_btn = gr.Button("Back to Join")
+
+            with gr.Group(elem_classes=["profile-card"]):
+                profile_info = gr.Markdown("")
+                gr.Markdown("#### Rooms You Own")
+                profile_owned = gr.Dataframe(
+                    headers=["Name", "Location", "Start", "End", "Duration", "Privacy", "Participants"],
+                    value=[],
+                    interactive=False,
+                )
+                gr.Markdown("#### Rooms You Joined")
+                profile_joined = gr.Dataframe(
+                    headers=["Name", "Location", "Start", "End", "Duration", "Privacy", "Participants"],
+                    value=[],
+                    interactive=False,
+                )
+
     # Wire events
     def on_login(sid):
         lg_vis, mg_vis, msg = login(sid)
@@ -440,7 +511,7 @@ with gr.Blocks(title="Scheduling App", css=CUSTOM_CSS) as demo:
     )
 
     # Initial population of join buttons
-    demo.load(refresh_join_buttons, inputs=None, outputs=[*room_labels, *room_join_btns, room_ids_state])
+    demo.load(refresh_join_buttons, inputs=None, outputs=[*room_labels, *room_join_btns, room_ids_state, *room_rows])
 
     # Create room submit
     create_evt = create_submit.click(
@@ -466,7 +537,7 @@ with gr.Blocks(title="Scheduling App", css=CUSTOM_CSS) as demo:
     )
 
     # After creating a room, refresh join rows so new room appears
-    create_evt.then(refresh_join_buttons, inputs=None, outputs=[*room_labels, *room_join_btns, room_ids_state])
+    create_evt.then(refresh_join_buttons, inputs=None, outputs=[*room_labels, *room_join_btns, room_ids_state, *room_rows])
 
     # Navigation between pages
     def goto_create():
@@ -475,8 +546,65 @@ with gr.Blocks(title="Scheduling App", css=CUSTOM_CSS) as demo:
     def goto_join():
         return gr.update(visible=True), gr.update(visible=False), gr.update(value="")
 
+    def _build_profile_data(sid: str):
+        sid = (sid or "").strip()
+        rooms = _load_rooms()
+
+        def fmt_row(r):
+            try:
+                start_dt = datetime.strptime(r.get("time", ""), TIME_FMT)
+                end_dt = start_dt + timedelta(minutes=int(r.get("duration", MAX_DURATION_MIN)))
+                end_str = end_dt.strftime(TIME_FMT)
+            except Exception:
+                end_str = ""
+            return [
+                r.get("name", ""),
+                r.get("location", ""),
+                r.get("time", ""),
+                end_str,
+                int(r.get("duration", MAX_DURATION_MIN)),
+                (r.get("privacy") or "public").capitalize(),
+                len(r.get("participants", [])),
+            ]
+
+        owned_rows = [fmt_row(r) for r in rooms if (r.get("owner_id") or "").strip() == sid]
+        joined_rows = [fmt_row(r) for r in rooms if sid and sid in r.get("participants", [])]
+        info_text = f"Logged in as: {sid}" if sid else "Not logged in."
+        return info_text, owned_rows, joined_rows
+
+    def goto_profile(sid):
+        info_text, owned_rows, joined_rows = _build_profile_data(sid)
+        # Hide join and create; show profile; update profile widgets
+        return (
+            gr.update(visible=False),
+            gr.update(visible=False),
+            gr.update(visible=True),
+            gr.update(value=info_text),
+            gr.update(value=owned_rows),
+            gr.update(value=joined_rows),
+        )
+
+    def back_to_join_from_profile():
+        # Show join; hide create and profile; clear join status
+        return (
+            gr.update(visible=True),
+            gr.update(visible=False),
+            gr.update(visible=False),
+            gr.update(value=""),
+        )
+
     goto_create_btn.click(goto_create, inputs=None, outputs=[join_page, create_page, create_status])
+    goto_profile_btn.click(
+        goto_profile,
+        inputs=[student_state],
+        outputs=[join_page, create_page, profile_page, profile_info, profile_owned, profile_joined],
+    )
     back_to_join_btn.click(goto_join, inputs=None, outputs=[join_page, create_page, join_status])
+    back_from_profile_btn.click(
+        back_to_join_from_profile,
+        inputs=None,
+        outputs=[join_page, create_page, profile_page, join_status],
+    )
 
     # Join handlers per button
     def _join_by_index(sid, ids, index):
@@ -490,7 +618,7 @@ with gr.Blocks(title="Scheduling App", css=CUSTOM_CSS) as demo:
                 return _join_by_index(sid, ids, i)
             return _handler
         _btn.click(_make_handler(_idx), inputs=[student_state, room_ids_state], outputs=[join_status]) \
-            .then(refresh_join_buttons, inputs=None, outputs=[*room_labels, *room_join_btns, room_ids_state])
+            .then(refresh_join_buttons, inputs=None, outputs=[*room_labels, *room_join_btns, room_ids_state, *room_rows])
 
 if __name__ == "__main__":
     _ensure_storage()

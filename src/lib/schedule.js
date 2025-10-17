@@ -1,0 +1,64 @@
+import { loadRooms } from './storage'
+
+export const SLOT_MINUTES = 30
+export const MAX_DURATION_MIN = 60
+export const LOCATION_OPTIONS = [
+  'Soccer Field A',
+  'Soccer Field B',
+  'Soccer Field C',
+  'North Field',
+  'South Field',
+  'Gym Court 1',
+  'Gym Court 2',
+]
+
+export function isValidSlot(date) { return [0,30].includes(date.getMinutes()) && date.getSeconds()===0 && date.getMilliseconds()===0 }
+
+export function ceilToNextSlot(d){
+  const x = new Date(d)
+  x.setSeconds(0,0)
+  const add = (30 - (x.getMinutes() % 30)) % 30
+  if (add) x.setMinutes(x.getMinutes()+add)
+  return x
+}
+
+export function overlaps(start1, dur1, start2, dur2) {
+  const end1 = new Date(start1.getTime() + dur1*60000)
+  const end2 = new Date(start2.getTime() + dur2*60000)
+  return !(end1 <= start2 || end2 <= start1)
+}
+
+export function available(location, start, duration) {
+  const rooms = loadRooms()
+  return rooms.every(r => {
+    if ((r.location||'').toLowerCase() !== (location||'').toLowerCase()) return true
+    const rs = new Date(r.time.replace(' ', 'T'))
+    const d = parseInt(r.duration||MAX_DURATION_MIN,10)
+    return !overlaps(rs, d, start, duration)
+  })
+}
+
+export function listAvailableDates(days = 7) {
+  const today = new Date()
+  const res = []
+  for (let i=0;i<days;i++){
+    const d = new Date(today)
+    d.setDate(d.getDate()+i)
+    const pad = n=>String(n).padStart(2,'0')
+    res.push(`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`)
+  }
+  return res
+}
+
+export function listAllTimes(dateStr) {
+  const [y,m,d] = dateStr.split('-').map(Number)
+  const start = new Date(y,m-1,d,0,0,0,0)
+  const end = new Date(start); end.setDate(end.getDate()+1)
+  const out = []
+  for (let cur = new Date(start); cur < end; cur = new Date(cur.getTime()+SLOT_MINUTES*60000)) {
+    const pad = n=>String(n).padStart(2,'0')
+    out.push(`${pad(cur.getHours())}:${pad(cur.getMinutes())}`)
+  }
+  return out
+}
+
