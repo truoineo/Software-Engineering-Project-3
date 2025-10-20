@@ -4,6 +4,12 @@ const STORAGE_KEY = 'rooms'
 export const ROOMS_UPDATED_EVENT = 'rooms:updated'
 const DEFAULT_DURATION = 60
 const VALID_TYPES = new Set(['soccer', 'football', 'basketball', 'general'])
+const DEFAULT_CAPACITY = {
+  soccer: 16,
+  football: 22,
+  basketball: 10,
+  general: 12,
+}
 
 function emitRoomsUpdated() {
   if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
@@ -50,6 +56,10 @@ function sanitizeRooms(candidate) {
     let type = coerceString(room.type).toLowerCase()
     if (!VALID_TYPES.has(type)) type = 'general'
 
+    const capacityRaw = room.capacity
+    let capacity = Number.parseInt(typeof capacityRaw === 'string' ? capacityRaw.trim() : capacityRaw, 10)
+    if (!Number.isFinite(capacity) || capacity <= 0) capacity = DEFAULT_CAPACITY[type]
+
     sanitized.push({
       id,
       name,
@@ -60,6 +70,7 @@ function sanitizeRooms(candidate) {
       location,
       privacy,
       type,
+      capacity,
     })
     seenIds.add(id)
   }
@@ -107,6 +118,7 @@ export function listTable() {
       owner_id: r.owner_id,
       privacy: r.privacy,
       type: r.type,
+      capacity: r.capacity,
       participants: (r.participants || []).length,
     }
   })

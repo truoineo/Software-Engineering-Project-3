@@ -4,14 +4,23 @@ import { loadRooms, saveRooms, ROOMS_UPDATED_EVENT } from './storage'
 const RoomsCtx = createContext(null)
 
 export function RoomsProvider({ children }) {
-  const [rooms, setRoomsState] = useState(() => loadRooms())
+  const [rooms, setRoomsState] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
 
   const syncFromStorage = useCallback(() => {
-    setRoomsState(loadRooms())
+    setIsLoading(true)
+    const next = loadRooms()
+    setRoomsState(next)
+    if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(() => setIsLoading(false))
+    } else {
+      setTimeout(() => setIsLoading(false), 0)
+    }
   }, [])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
+    syncFromStorage()
     const handle = () => syncFromStorage()
     window.addEventListener('storage', handle)
     window.addEventListener(ROOMS_UPDATED_EVENT, handle)
@@ -26,7 +35,9 @@ export function RoomsProvider({ children }) {
       const next = typeof updater === 'function' ? updater(prev) : updater
       if (next === prev) return prev
       saveRooms(next)
-      return loadRooms()
+      const updated = loadRooms()
+      setIsLoading(false)
+      return updated
     })
   }, [])
 
@@ -35,8 +46,9 @@ export function RoomsProvider({ children }) {
       rooms,
       setRooms: commit,
       refresh: syncFromStorage,
+      isLoading,
     }),
-    [rooms, commit, syncFromStorage]
+    [rooms, commit, syncFromStorage, isLoading]
   )
 
   return <RoomsCtx.Provider value={value}>{children}</RoomsCtx.Provider>

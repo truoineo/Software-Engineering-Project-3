@@ -15,6 +15,13 @@ const TYPE_LOCATION_MAP = {
   general: ALL_LOCATIONS,
 }
 
+const TYPE_CAPACITY = {
+  soccer: 16,
+  football: 22,
+  basketball: 10,
+  general: 12,
+}
+
 export const LOCATION_OPTIONS = ALL_LOCATIONS
 export const TYPE_OPTIONS = [
   { value: 'soccer', label: 'Soccer' },
@@ -32,6 +39,114 @@ export function listLocationsForType(type) {
 export function getTypeLabel(type) {
   const match = TYPE_OPTIONS.find(t => t.value === type)
   return match ? match.label : 'General'
+}
+
+const TYPE_ICON = {
+  soccer: '⚽',
+  football: '🏈',
+  basketball: '🏀',
+  general: '🏟️',
+}
+
+export function getTypeIcon(type) {
+  return TYPE_ICON[type] || TYPE_ICON.general
+}
+
+export function getCapacityForType(type) {
+  return TYPE_CAPACITY[type] ?? TYPE_CAPACITY.general
+}
+
+export function getRoomCapacity(room) {
+  if (!room) return getCapacityForType('general')
+  const raw = room.capacity
+  if (typeof raw === 'number' && Number.isFinite(raw) && raw > 0) return raw
+  if (typeof raw === 'string' && raw.trim()) {
+    const parsed = Number.parseInt(raw, 10)
+    if (Number.isFinite(parsed) && parsed > 0) return parsed
+  }
+  return getCapacityForType(room.type)
+}
+
+export function calculateOpenSeats(room) {
+  const capacity = getRoomCapacity(room)
+  const participants = Array.isArray(room?.participants) ? room.participants.length : 0
+  return {
+    capacity,
+    openSeats: Math.max(capacity - participants, 0),
+  }
+}
+
+export function isNearlyFull(room, threshold = 0.2) {
+  const { capacity, openSeats } = calculateOpenSeats(room)
+  if (capacity === 0) return false
+  return openSeats / capacity <= threshold
+}
+
+export function summarizeLocationLoad(rooms) {
+  const summary = new Map()
+  rooms.forEach(room => {
+    const key = (room.location || '').toLowerCase()
+    const { capacity, openSeats } = calculateOpenSeats(room)
+    if (!summary.has(key)) {
+      summary.set(key, {
+        location: room.location,
+        rooms: 0,
+        capacity: 0,
+        openSeats: 0,
+      })
+    }
+    const entry = summary.get(key)
+    entry.rooms += 1
+    entry.capacity += capacity
+    entry.openSeats += openSeats
+  })
+  return Array.from(summary.values())
+}
+
+export function timeUntil(date) {
+  if (!(date instanceof Date)) return ''
+  const now = new Date()
+  const diffMs = date.getTime() - now.getTime()
+  const absDiff = Math.abs(diffMs)
+
+  const minute = 60 * 1000
+  const hour = 60 * minute
+  const day = 24 * hour
+
+  const formatter = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' })
+
+  if (absDiff < minute) return formatter.format(Math.round(diffMs / minute), 'minute')
+  if (absDiff < hour) return formatter.format(Math.round(diffMs / minute), 'minute')
+  if (absDiff < day) return formatter.format(Math.round(diffMs / hour), 'hour')
+
+  return formatter.format(Math.round(diffMs / day), 'day')
+}
+
+export function buildSparklineData(rows, days = 7) {
+  const today = new Date()
+  today.setHours(0,0,0,0)
+  const buckets = Array.from({ length: days }, (_, idx) => {
+    const d = new Date(today)
+    d.setDate(d.getDate() + idx)
+    return {
+      date: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,
+      label: d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+      count: 0,
+    }
+  })
+
+  const bucketMap = new Map(buckets.map(b => [b.date, b]))
+  rows.forEach(room => {
+    const datePart = (room.time || '').split(' ')[0]
+    const bucket = bucketMap.get(datePart)
+    if (bucket) bucket.count += 1
+  })
+
+  const peak = Math.max(...buckets.map(b => b.count), 1)
+  return buckets.map(b => ({
+    ...b,
+    ratio: peak === 0 ? 0 : b.count / peak,
+  }))
 }
 
 export function isValidSlot(date) { return [0,30].includes(date.getMinutes()) && date.getSeconds()===0 && date.getMilliseconds()===0 }
