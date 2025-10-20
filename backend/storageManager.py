@@ -1,14 +1,14 @@
 import json, os
 from datetime import datetime, timedelta
 from pathlib import Path
-from models.user import Users, User
-from models.reservation import DailyReservations, CourtReservation
+from model import Users, User
+from model import DailyReservations, CourtReservations, TimeSlot
 
 STORAGE_DIR = Path("backend/storage")
 
 '''
 ===================================================================================
-            All functions below are using Pydantic Models which is in models/.
+            All functions below are using Pydantic Models which is in model.py.
             These models are used for data validation and settings management.
 ===================================================================================
 '''
@@ -57,20 +57,25 @@ def save_daily_reservations(date: str, reservations: DailyReservations):
  
 def create_reservation(date: str, court_name: str, timeslot: str, student_id: str):
     reservations = load_daily_reservations(date)
-    courts = reservations.__root__
+    courts = reservations.root
     if court_name not in courts:
         raise ValueError("Court not found.")
     
     court = courts[court_name]
     if timeslot not in court.timeslots:
-        court.timeslots[timeslot] = {"players": [], "status": "available"}
-    
-    slot = court.timeslots[timeslot]
-    if len(slot.players) >= court.capacity:
+        # create a TimeSlot model for this timeslot
+        try:
+            ts_time = datetime.fromisoformat(timeslot)
+        except Exception:
+            ts_time = datetime.now()
+        court.timeslots[timeslot] = TimeSlot(time=ts_time, players_id=[], status="available")
+
+    slot: TimeSlot = court.timeslots[timeslot]
+    if len(slot.players_id) >= court.capacity:
         raise ValueError("Timeslot is full.")
-    
-    slot.players.append(student_id)
-    if len(slot.players) == court.capacity:
+
+    slot.players_id.append(student_id)
+    if len(slot.players_id) == court.capacity:
         slot.status = "full"
     
     save_daily_reservations(date, reservations)
