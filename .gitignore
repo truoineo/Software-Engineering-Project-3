@@ -20,3 +20,5 @@ Thumbs.db
 
 # Local data from prior Python app
 storage.json
+
+venv/

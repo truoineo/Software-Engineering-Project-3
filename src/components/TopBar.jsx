@@ -13,15 +13,14 @@ export default function TopBar({ onCreate, onProfile, onLobby }) {
       <div className="topbar-left">Logged in as: {studentId}</div>
       <div className="topbar-center">
         <button
-          className={`btn ${path.startsWith('/join') ? 'btn-primary' : 'btn-ghost'}`}
+          className={`btn btn-sm ${path.startsWith('/join') ? 'btn-primary' : 'btn-ghost'}`}
           onClick={() => onLobby?.() || navigate('/join')}
         >
           Lobby
         </button>
         <button
-          className={`btn ${path.startsWith('/create') ? 'btn-primary' : 'btn-ghost'}`}
+          className={`btn btn-sm ${path.startsWith('/create') ? 'btn-primary' : 'btn-ghost'}`}
           onClick={() => onCreate?.() || navigate('/create')}
-          style={{ marginLeft: 8 }}
         >
           Create
         </button>

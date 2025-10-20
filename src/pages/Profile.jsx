@@ -1,20 +1,24 @@
 import React, { useMemo } from 'react'
 import { useAuth } from '../lib/auth'
-import { loadRooms } from '../lib/storage'
+import { useRooms } from '../lib/rooms'
+import { getTypeLabel } from '../lib/schedule'
 
 export default function Profile(){
   const { studentId } = useAuth()
-  const rooms = loadRooms()
+  const { rooms } = useRooms()
 
   const owned = useMemo(()=> rooms.filter(r => r.owner_id === studentId), [rooms, studentId])
   const joined = useMemo(()=> rooms.filter(r => (r.participants||[]).includes(studentId)), [rooms, studentId])
 
-  function Table({ rows }){
+  function Table({ rows, emptyLabel }){
+    if (rows.length === 0) {
+      return <div className="empty small">{emptyLabel}</div>
+    }
     return (
       <table className="table">
         <thead>
           <tr>
-            <th>Name</th><th>Location</th><th>Start</th><th>End</th><th>Duration</th><th>Privacy</th><th>Participants</th>
+            <th>Name</th><th>Type</th><th>Location</th><th>Start</th><th>End</th><th>Duration</th><th>Privacy</th><th>Participants</th>
           </tr>
         </thead>
         <tbody>
@@ -26,6 +30,7 @@ export default function Profile(){
             return (
               <tr key={r.id}>
                 <td>{r.name}</td>
+                <td>{getTypeLabel(r.type)}</td>
                 <td>{r.location}</td>
                 <td>{fmt(start)}</td>
                 <td>{fmt(end)}</td>
@@ -45,11 +50,10 @@ export default function Profile(){
       <div className="profile-box">
         <div className="profile-header">Logged in as: <strong>{studentId}</strong></div>
         <h3>Rooms You Own</h3>
-        <Table rows={owned} />
+        <Table rows={owned} emptyLabel="You haven't created any rooms yet." />
         <h3>Rooms You Joined</h3>
-        <Table rows={joined} />
+        <Table rows={joined} emptyLabel="You haven't joined any rooms yet." />
       </div>
     </div>
   )
 }
-

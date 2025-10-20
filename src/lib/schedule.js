@@ -2,15 +2,37 @@ import { loadRooms } from './storage'
 
 export const SLOT_MINUTES = 30
 export const MAX_DURATION_MIN = 60
-export const LOCATION_OPTIONS = [
-  'Soccer Field A',
-  'Soccer Field B',
-  'Soccer Field C',
-  'North Field',
-  'South Field',
-  'Gym Court 1',
-  'Gym Court 2',
+
+const BASE_TYPE_LOCATION_MAP = {
+  soccer: ['Soccer Field A', 'Soccer Field B', 'Soccer Field C'],
+  football: ['North Field', 'South Field'],
+  basketball: ['Gym Court 1', 'Gym Court 2'],
+}
+
+const ALL_LOCATIONS = Array.from(new Set(Object.values(BASE_TYPE_LOCATION_MAP).flat()))
+const TYPE_LOCATION_MAP = {
+  ...BASE_TYPE_LOCATION_MAP,
+  general: ALL_LOCATIONS,
+}
+
+export const LOCATION_OPTIONS = ALL_LOCATIONS
+export const TYPE_OPTIONS = [
+  { value: 'soccer', label: 'Soccer' },
+  { value: 'football', label: 'Football' },
+  { value: 'basketball', label: 'Basketball' },
+  { value: 'general', label: 'General' },
 ]
+export const DEFAULT_TYPE = TYPE_OPTIONS[0]?.value ?? 'general'
+
+export function listLocationsForType(type) {
+  const t = type && TYPE_LOCATION_MAP[type] ? type : 'general'
+  return [...TYPE_LOCATION_MAP[t]]
+}
+
+export function getTypeLabel(type) {
+  const match = TYPE_OPTIONS.find(t => t.value === type)
+  return match ? match.label : 'General'
+}
 
 export function isValidSlot(date) { return [0,30].includes(date.getMinutes()) && date.getSeconds()===0 && date.getMilliseconds()===0 }
 
@@ -28,8 +50,8 @@ export function overlaps(start1, dur1, start2, dur2) {
   return !(end1 <= start2 || end2 <= start1)
 }
 
-export function available(location, start, duration) {
-  const rooms = loadRooms()
+export function available(location, start, duration, roomsOverride) {
+  const rooms = roomsOverride ?? loadRooms()
   return rooms.every(r => {
     if ((r.location||'').toLowerCase() !== (location||'').toLowerCase()) return true
     const rs = new Date(r.time.replace(' ', 'T'))
@@ -61,4 +83,3 @@ export function listAllTimes(dateStr) {
   }
   return out
 }
-
