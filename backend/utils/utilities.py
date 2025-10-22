@@ -35,27 +35,41 @@ def validate_user_id(user_id: str) -> tuple[bool, str]:
     return True, ""
 
 
-def load_users() -> dict:
-    """Load all users from users.json"""
+def load_users() -> Optional[Users]:
+    """
+    Load all users from users.json using Pydantic model.
+    
+    Returns:
+        Users object or None if file doesn't exist
+    """
     if not USERS_FILE.exists():
-        return {}
+        return None
     
     try:
         with open(USERS_FILE, 'r') as f:
-            return json.load(f)
+            data = json.load(f)
+        return Users.model_validate(data)
     except Exception as e:
         print(f"Error loading users: {e}")
-        return {}
+        return None
 
 
-def save_users(users: dict) -> bool:
-    """Save users to users.json"""
+def save_users(users: Users) -> bool:
+    """
+    Save users to users.json using Pydantic model.
+    
+    Args:
+        users: Users object to save
+        
+    Returns:
+        True if successful, False otherwise
+    """
     try:
         # Ensure storage directory exists
         STORAGE_DIR.mkdir(parents=True, exist_ok=True)
         
         with open(USERS_FILE, 'w') as f:
-            json.dump(users, f, indent=2)
+            json.dump(users.model_dump(), f, indent=2)
         return True
     except Exception as e:
         print(f"Error saving users: {e}")
@@ -81,19 +95,24 @@ def get_or_register_user(user_id: str, name: None | str) -> tuple[bool, str, dic
     
     # Load existing users
     users = load_users()
+    if users is None:
+        # Create new Users object if file doesn't exist
+        users = Users({})
     
     # If user exists, return it
-    if user_id in users:
-        return True, "Existing user", users[user_id]
+    if user_id in users.root:
+        user_data = users.root[user_id].model_dump()
+        return True, "Existing user", user_data
     
     # Register new user
     if name is None:
         name = f"User {user_id}"
     
-    users[user_id] = {"name": name}
+    users.root[user_id] = User(name=name)
     
     if save_users(users):
-        return True, f"New user registered: {name}", users[user_id]
+        user_data = users.root[user_id].model_dump()
+        return True, f"New user registered: {name}", user_data
     else:
         return False, "Error saving new user", {}
 
