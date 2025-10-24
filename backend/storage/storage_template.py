@@ -1,16 +1,5 @@
 from pydantic import BaseModel, Field, RootModel
 from typing import Dict, List, Literal
-from enum import Enum
-
-# --- CourtType enum ---
-class CourtType(str, Enum):
-    """Enum for different court/sport types"""
-    BASKETBALL = "Basketball"
-    SOCCER = "Soccer"
-    FOOTBALL = "Football"
-    TENNIS = "Tennis"
-    VOLLEYBALL = "Volleyball"
-
 
 # --- User model ---
 class User(BaseModel):
@@ -33,11 +22,12 @@ class TimeSlot(BaseModel):
     players_id: List[str] = Field(default_factory=list)  # List of student IDs who have reserved this timeslot
     status: str = "available"  # "available" or "full"
     type: Literal["private", "public"] = "public"  # Set by first player: "private" or "public"
+    reservation_name: str = ""  # Optional name for the reservation (e.g., "Basketball Game", "Practice Session")
+    court_type: str = ""  # User-defined court/activity type (e.g., "Basketball", "3v3 Soccer", "Doubles Tennis")
 
 
 # --- CourtReservations model ---
 class CourtReservations(BaseModel):
-    type: CourtType  # Court/sport type (Basketball, Soccer, etc.)
     capacity: int  # Maximum players allowed
     timeslots: Dict[str, TimeSlot]  # Time string (HH:MM) -> TimeSlot
 

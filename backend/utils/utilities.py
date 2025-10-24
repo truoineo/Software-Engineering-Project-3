@@ -11,7 +11,7 @@ import sys
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from storage.storage_template import DailyReservations, CourtReservations, TimeSlot, CourtType, Users, User
+from storage.storage_template import DailyReservations, CourtReservations, TimeSlot, Users, User
 
 # Storage directory
 STORAGE_DIR = Path(__file__).parent.parent / "storage"
@@ -217,15 +217,15 @@ def cleanup_old_reservations() -> int:
 
 
 def initialize_reservations_for_next_10_days(
-    courts: dict[str, tuple[CourtType, int]],
+    courts: dict[str, int],
     timeslots: list[str]
 ) -> int:
     """
     Create reservation files for the next 10 days if they don't exist.
     
     Args:
-        courts: Dictionary of court_name -> (court_type, capacity)
-                Example: {"Court A": (CourtType.BASKETBALL, 4)}
+        courts: Dictionary of court_name -> capacity
+                Example: {"Court A": 4, "Court B": 6}
         timeslots: List of timeslot strings in HH:MM format
                    Example: ["09:00", "11:00", "14:00", "18:00"]
     
@@ -245,15 +245,20 @@ def initialize_reservations_for_next_10_days(
         
         # Create new daily reservations
         courts_data = {}
-        for court_name, (court_type, capacity) in courts.items():
-            # Create empty timeslots with default "public" type
+        for court_name, capacity in courts.items():
+            # Create empty timeslots with default values
             timeslots_data = {
-                time: TimeSlot(players_id=[], status="available", type="public")
+                time: TimeSlot(
+                    players_id=[], 
+                    status="available", 
+                    type="public", 
+                    reservation_name="",
+                    court_type=""
+                )
                 for time in timeslots
             }
             
             courts_data[court_name] = CourtReservations(
-                type=court_type,
                 capacity=capacity,
                 timeslots=timeslots_data
             )
@@ -287,7 +292,9 @@ def add_player_to_timeslot(
     timeslot: str,
     user_id: str,
     user_name: str  | None,
-    timeslot_type: Literal["private", "public"] = "public"
+    timeslot_type: Literal["private", "public"] = "public",
+    reservation_name: str = "",
+    court_type: str = ""
 ) -> dict:
     """
     Add a player to a specific timeslot and auto-update status.
@@ -300,6 +307,8 @@ def add_player_to_timeslot(
         user_id: Student ID to add (must be 7 digits)
         user_name: Optional name for new users
         timeslot_type: "private" or "public" (only applies to first player)
+        reservation_name: Optional name for the reservation (only applies to first player)
+        court_type: User-defined court/activity type (only applies to first player)
     
     Returns:
         Dictionary with success status and message
@@ -342,10 +351,12 @@ def add_player_to_timeslot(
     if slot.type == "private" and len(slot.players_id) > 0:
         return {"success": False, "message": "This is a private timeslot"}
     
-    # Set type if this is the first player
+    # Set type, reservation name, and court type if this is the first player
     is_first_player = len(slot.players_id) == 0
     if is_first_player:
         slot.type = timeslot_type
+        slot.reservation_name = reservation_name
+        slot.court_type = court_type
     
     # Add player
     slot.players_id.append(user_id)
@@ -360,6 +371,8 @@ def add_player_to_timeslot(
             "message": f"Successfully joined {court_name} at {timeslot}",
             "status": slot.status,
             "timeslot_type": slot.type,
+            "reservation_name": slot.reservation_name,
+            "court_type": slot.court_type,
             "current_players": len(slot.players_id),
             "capacity": court.capacity,
             "user_name": user_data.get("name", "Unknown")
@@ -367,6 +380,10 @@ def add_player_to_timeslot(
         
         if is_first_player:
             result["message"] += f" (Set as {timeslot_type})"
+            if reservation_name:
+                result["message"] += f" - '{reservation_name}'"
+            if court_type:
+                result["message"] += f" ({court_type})"
         
         if is_new_user:
             result["new_user_registered"] = True
@@ -437,11 +454,11 @@ def remove_player_from_timeslot(
 if __name__ == "__main__":
     print("🧪 Testing utilities...\n")
     
-    # Define your courts
+    # Define your courts (now just capacity per court)
     courts_config = {
-        "Court A": (CourtType.BASKETBALL, 4),
-        "Court B": (CourtType.TENNIS, 4),
-        "Court C": (CourtType.VOLLEYBALL, 6),
+        "Court A": 4,
+        "Court B": 4,
+        "Court C": 6,
     }
     
     # Define timeslots
@@ -452,11 +469,24 @@ if __name__ == "__main__":
     created = initialize_reservations_for_next_10_days(courts_config, timeslots_config)
     print(f"✅ Created {created} new reservation files\n")
     
-    # Test adding a player
+    # Test adding a player with custom court type
     print("👤 Testing add player...")
     today = datetime.now()
-    result = add_player_to_timeslot(today, "Court A", "09:00", "1218347", user_name="Huy", timeslot_type="private")
+    result = add_player_to_timeslot(
+        today, 
+        "Court A", 
+        "09:00", 
+        "1218347", 
+        user_name="Huy", 
+        timeslot_type="private",
+        reservation_name="Practice Session",
+        court_type="5v5 Basketball"
+    )
     print(f"   {result['message']}")
+    if result.get("reservation_name"):
+        print(f"   Reservation: {result['reservation_name']}")
+    if result.get("court_type"):
+        print(f"   Court Type: {result['court_type']}")
     
     # Clean up old files
     print("\n🧹 Cleaning up old reservation files...")
