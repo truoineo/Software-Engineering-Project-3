@@ -1,0 +1,95 @@
+{
+  "Court A": {
+    "type": "Basketball",
+    "capacity": 4,
+    "timeslots": {
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      }
+    }
+  },
+  "Court B": {
+    "type": "Tennis",
+    "capacity": 4,
+    "timeslots": {
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      }
+    }
+  },
+  "Court C": {
+    "type": "Volleyball",
+    "capacity": 6,
+    "timeslots": {
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public"
+      }
+    }
+  }
+}
