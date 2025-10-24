@@ -1,27 +1,38 @@
 import React, { createContext, useContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { loadRooms, saveRooms, ROOMS_UPDATED_EVENT } from './storage'
+import { fetchRoomsFromApi } from './api'
 
 const RoomsCtx = createContext(null)
 
 export function RoomsProvider({ children }) {
   const [rooms, setRoomsState] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [supportsApi, setSupportsApi] = useState(true)
+  const [error, setError] = useState(null)
 
-  const syncFromStorage = useCallback(() => {
+  const syncFromStorage = useCallback(async () => {
     setIsLoading(true)
-    const next = loadRooms()
-    setRoomsState(next)
-    if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
-      window.requestAnimationFrame(() => setIsLoading(false))
-    } else {
-      setTimeout(() => setIsLoading(false), 0)
+    try {
+      const fromApi = await fetchRoomsFromApi()
+      setSupportsApi(true)
+      setRoomsState(fromApi)
+      saveRooms(fromApi)
+      setError(null)
+    } catch (err) {
+      console.warn('Falling back to local storage for rooms', err)
+      setSupportsApi(false)
+      setError(err?.message || 'Unable to reach server')
+      const fallback = loadRooms()
+      setRoomsState(fallback)
+    } finally {
+      setIsLoading(false)
     }
   }, [])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
     syncFromStorage()
-    const handle = () => syncFromStorage()
+    const handle = () => { syncFromStorage() }
     window.addEventListener('storage', handle)
     window.addEventListener(ROOMS_UPDATED_EVENT, handle)
     return () => {
@@ -35,9 +46,7 @@ export function RoomsProvider({ children }) {
       const next = typeof updater === 'function' ? updater(prev) : updater
       if (next === prev) return prev
       saveRooms(next)
-      const updated = loadRooms()
-      setIsLoading(false)
-      return updated
+      return next
     })
   }, [])
 
@@ -47,8 +56,10 @@ export function RoomsProvider({ children }) {
       setRooms: commit,
       refresh: syncFromStorage,
       isLoading,
+      supportsApi,
+      error,
     }),
-    [rooms, commit, syncFromStorage, isLoading]
+    [rooms, commit, syncFromStorage, isLoading, supportsApi, error]
   )
 
   return <RoomsCtx.Provider value={value}>{children}</RoomsCtx.Provider>

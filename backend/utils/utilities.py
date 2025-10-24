@@ -267,6 +267,33 @@ def initialize_reservations_for_next_10_days(
     return created_count
 
 
+def ensure_reservations_for_date(
+    date: datetime,
+    courts: dict[str, tuple[CourtType, int]],
+    timeslots: list[str],
+) -> DailyReservations:
+    """Ensure there is a reservation file for the given date and return it."""
+    reservations = load_daily_reservations(date)
+    if reservations:
+        return reservations
+
+    courts_data = {}
+    for court_name, (court_type, capacity) in courts.items():
+        timeslots_data = {
+            time: TimeSlot(players_id=[], status="available", type="public")
+            for time in timeslots
+        }
+        courts_data[court_name] = CourtReservations(
+            type=court_type,
+            capacity=capacity,
+            timeslots=timeslots_data,
+        )
+
+    reservations = DailyReservations(courts_data)
+    save_daily_reservations(date, reservations)
+    return reservations
+
+
 def sync_timeslot_status(timeslot: TimeSlot, capacity: int) -> None:
     """
     Synchronize the status field with the current player count.
@@ -286,8 +313,10 @@ def add_player_to_timeslot(
     court_name: str,
     timeslot: str,
     user_id: str,
-    user_name: str  | None,
-    timeslot_type: Literal["private", "public"] = "public"
+    user_name: str | None,
+    timeslot_type: Literal["private", "public"] = "public",
+    room_name: str | None = None,
+    duration_min: int | None = None,
 ) -> dict:
     """
     Add a player to a specific timeslot and auto-update status.
@@ -346,6 +375,13 @@ def add_player_to_timeslot(
     is_first_player = len(slot.players_id) == 0
     if is_first_player:
         slot.type = timeslot_type
+        slot.owner_id = user_id
+        slot.room_name = room_name or f"{court_name} {timeslot}"
+        slot.duration_min = duration_min
+    else:
+        # Ensure room metadata stays populated even if not set previously
+        if not slot.room_name and room_name:
+            slot.room_name = room_name
     
     # Add player
     slot.players_id.append(user_id)
@@ -362,7 +398,10 @@ def add_player_to_timeslot(
             "timeslot_type": slot.type,
             "current_players": len(slot.players_id),
             "capacity": court.capacity,
-            "user_name": user_data.get("name", "Unknown")
+            "user_name": user_data.get("name", "Unknown"),
+            "room_name": slot.room_name,
+            "owner_id": slot.owner_id,
+            "duration_min": slot.duration_min or 60,
         }
         
         if is_first_player:
@@ -416,6 +455,14 @@ def remove_player_from_timeslot(
     
     # Remove player
     slot.players_id.remove(user_id)
+
+    # If owner leaves, promote next participant or reset metadata
+    if slot.owner_id == user_id:
+        slot.owner_id = slot.players_id[0] if slot.players_id else None
+        if not slot.owner_id:
+            slot.room_name = None
+            slot.type = "public"
+            slot.duration_min = None
     
     # Auto-update status
     sync_timeslot_status(slot, court.capacity)
@@ -427,10 +474,72 @@ def remove_player_from_timeslot(
             "message": f"Successfully left {court_name} at {timeslot}",
             "status": slot.status,
             "current_players": len(slot.players_id),
-            "capacity": court.capacity
+            "capacity": court.capacity,
+            "owner_id": slot.owner_id,
+            "room_name": slot.room_name,
         }
     else:
         return {"success": False, "message": "Error saving reservation"}
+
+
+def clear_timeslot(
+    date: datetime,
+    court_name: str,
+    timeslot: str,
+) -> dict:
+    """Reset a timeslot to its default state."""
+    reservations = load_daily_reservations(date)
+    if not reservations:
+        return {"success": False, "message": "No reservations found for this date"}
+
+    court = reservations.root.get(court_name)
+    if not court:
+        return {"success": False, "message": f"Court '{court_name}' not found"}
+
+    slot = court.timeslots.get(timeslot)
+    if not slot:
+        return {"success": False, "message": f"Timeslot '{timeslot}' not found"}
+
+    slot.players_id = []
+    slot.status = "available"
+    slot.type = "public"
+    slot.owner_id = None
+    slot.room_name = None
+    slot.duration_min = None
+
+    if save_daily_reservations(date, reservations):
+        return {"success": True}
+    return {"success": False, "message": "Error saving reservation"}
+
+
+def list_reservations_between(start_date: datetime, days: int = 7) -> list[dict]:
+    """Return a list of reservation summaries for the given date range."""
+    results: list[dict] = []
+    for offset in range(days):
+        current = start_date + timedelta(days=offset)
+        reservations = load_daily_reservations(current)
+        if not reservations:
+            continue
+        date_str = current.strftime("%Y-%m-%d")
+        for court_name, court in reservations.root.items():
+            for time_str, slot in court.timeslots.items():
+                if not slot.owner_id and not slot.room_name and not slot.players_id:
+                    continue
+                results.append({
+                    "id": f"{date_str}|{court_name}|{time_str}",
+                    "date": date_str,
+                    "time": time_str,
+                    "court": court_name,
+                    "court_type": court.type.value,
+                    "capacity": court.capacity,
+                    "participants": slot.players_id,
+                    "owner_id": slot.owner_id,
+                    "room_name": slot.room_name,
+                    "privacy": slot.type,
+                    "duration_min": slot.duration_min,
+                    "status": slot.status,
+                })
+    return results
 
 
 # Example usage and testing

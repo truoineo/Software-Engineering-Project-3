@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { useRooms } from '../lib/rooms'
+import { createRoomApi, fetchAvailabilityTimes } from '../lib/api'
 import {
   TYPE_OPTIONS,
   listLocationsForType,
@@ -80,7 +81,7 @@ function isToday(date) {
 
 export default function Create() {
   const { studentId } = useAuth()
-  const { rooms, setRooms, isLoading: roomsLoading } = useRooms()
+  const { rooms, setRooms, refresh, supportsApi } = useRooms()
   const nav = useNavigate()
 
   const [name, setName] = useState('')
@@ -95,6 +96,8 @@ export default function Create() {
   const [currentMonth, setCurrentMonth] = useState(() => startOfMonth(new Date()))
   const [touched, setTouched] = useState({ name: false, location: false, time: false, capacity: false })
   const [calendarOpen, setCalendarOpen] = useState(false)
+  const [timeChoices, setTimeChoices] = useState([])
+  const [timesLoading, setTimesLoading] = useState(false)
 
   const calendarRef = useRef(null)
   const dateTriggerRef = useRef(null)
@@ -123,18 +126,62 @@ export default function Create() {
     }
   }, [defaultCapacity, touched.capacity])
 
-  const timeChoices = useMemo(() => {
-    if (!selectedDate) return []
-    const baseDate = parseDate(selectedDate)
-    const now = new Date()
-    const durationMinutes = Number(duration) || 0
-    return listAllTimes(selectedDate).filter(t => {
-      const candidate = combineDateAndTime(baseDate, t)
-      if (candidate < now) return false
-      if (location && !available(location, candidate, durationMinutes, rooms)) return false
-      return true
-    })
-  }, [selectedDate, location, duration, rooms])
+  useEffect(() => {
+    if (time && !timeChoices.includes(time)) {
+      setTime('')
+    }
+  }, [timeChoices, time])
+
+  useEffect(() => {
+    let cancelled = false
+    async function loadTimes() {
+      if (!selectedDate) {
+        setTimeChoices([])
+        return
+      }
+
+      const baseDate = parseDate(selectedDate)
+      const now = new Date()
+      const durationMinutes = Number(duration) || 0
+
+      const buildLocalTimes = () =>
+        listAllTimes(selectedDate).filter(t => {
+          const candidate = combineDateAndTime(baseDate, t)
+          if (candidate < now) return false
+          if (location && !available(location, candidate, durationMinutes, rooms)) return false
+          return true
+        })
+
+      if (!location) {
+        setTimeChoices(buildLocalTimes())
+        return
+      }
+
+      if (supportsApi) {
+        try {
+          setTimesLoading(true)
+          const apiTimes = await fetchAvailabilityTimes(location, selectedDate, durationMinutes)
+          if (!cancelled) {
+            setTimeChoices(apiTimes && apiTimes.length ? apiTimes : buildLocalTimes())
+          }
+          return
+        } catch (err) {
+          console.warn('Availability lookup failed, falling back to offline calculation', err)
+        } finally {
+          if (!cancelled) setTimesLoading(false)
+        }
+      }
+
+      if (!cancelled) {
+        setTimeChoices(buildLocalTimes())
+      }
+    }
+
+    loadTimes()
+    return () => {
+      cancelled = true
+    }
+  }, [selectedDate, location, duration, rooms, supportsApi])
 
   const selectedDateInvalid = useMemo(() => {
     if (!selectedDate || !location || !time) return false
@@ -227,7 +274,7 @@ export default function Create() {
     setStatus({ type: 'success', message })
   }
 
-  function submit(e) {
+  async function submit(e) {
     e?.preventDefault()
     markTouched('name')
     markTouched('location')
@@ -249,17 +296,37 @@ export default function Create() {
     }
 
     const when = `${selectedDate} ${time}`
-    const room = {
-      id: crypto.randomUUID(),
-      name: name.trim(),
+    const payload = {
       owner_id: studentId,
-      participants: [studentId],
+      name: name.trim(),
+      location,
       time: when,
       duration: durationMinutes,
-      location,
       privacy: (privacy || 'public').toLowerCase(),
       capacity: capacityNumber,
       type: sportType,
+      participants: [studentId],
+    }
+
+    let savedOffline = !supportsApi
+
+    if (supportsApi) {
+      try {
+        await createRoomApi(payload)
+        await refresh()
+        const typeLabel = getTypeLabel(sportType)
+        setSuccess(`Created ${privacy} ${typeLabel} room '${name.trim()}' on ${selectedDate} at ${time} (${durationMinutes}m, cap ${capacityNumber}).`)
+        setTimeout(() => nav('/join'), 600)
+        return
+      } catch (err) {
+        console.warn('API create failed, using offline storage', err)
+        savedOffline = true
+      }
+    }
+
+    const localRoom = {
+      id: crypto.randomUUID(),
+      ...payload,
     }
 
     let conflict = false
@@ -268,13 +335,14 @@ export default function Create() {
         conflict = true
         return prev
       }
-      return [...prev, room]
+      return [...prev, localRoom]
     })
 
     if (conflict) return setError('This location is already booked for the selected slot.')
 
     const typeLabel = getTypeLabel(sportType)
-    setSuccess(`Created ${privacy} ${typeLabel} room '${room.name}' on ${selectedDate} at ${time} (${durationMinutes}m, cap ${capacityNumber}).`)
+    const offlineNote = savedOffline ? ' (saved offline)' : ''
+    setSuccess(`Created ${privacy} ${typeLabel} room '${localRoom.name}' on ${selectedDate} at ${time} (${durationMinutes}m, cap ${capacityNumber})${offlineNote}.`)
     setTimeout(() => nav('/join'), 600)
   }
 
@@ -526,37 +594,39 @@ export default function Create() {
             <div className="row multi time-row">
               <div className="field">
                 <label htmlFor="room-time">Time</label>
-                <select
-                  className="select select-lg"
-                  id="room-time"
-                  value={time}
-                  onChange={e => {
-                    setTime(e.target.value)
-                    clearErrorStatus()
-                  }}
-                  onBlur={() => markTouched('time')}
-                  aria-invalid={showTimeError || showConflict}
-                  aria-describedby={timeHintId}
-                  onKeyDown={e => {
-                    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                      e.preventDefault()
-                      const currentIndex = timeChoices.indexOf(time)
-                      if (currentIndex >= 0) {
-                        const nextIndex = e.key === 'ArrowDown'
-                          ? Math.min(currentIndex + 1, timeChoices.length - 1)
-                          : Math.max(currentIndex - 1, 0)
-                        const next = timeChoices[nextIndex]
-                        if (next) setTime(next)
-                      } else if (timeChoices.length) {
-                        setTime(timeChoices[0])
-                      }
-                    }
-                  }}
-                >
-                  <option value="">Select time…</option>
-                  {timeChoices.map(t => (
-                    <option key={t} value={t}>
-                      {t}
+            <select
+              className="select select-lg"
+              id="room-time"
+              value={time}
+              onChange={e => {
+                setTime(e.target.value)
+                clearErrorStatus()
+              }}
+              onBlur={() => markTouched('time')}
+              aria-invalid={showTimeError || showConflict}
+              aria-describedby={timeHintId}
+              onKeyDown={e => {
+                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                  e.preventDefault()
+                  const currentIndex = timeChoices.indexOf(time)
+                  if (currentIndex >= 0) {
+                    const nextIndex = e.key === 'ArrowDown'
+                      ? Math.min(currentIndex + 1, timeChoices.length - 1)
+                      : Math.max(currentIndex - 1, 0)
+                    const next = timeChoices[nextIndex]
+                    if (next) setTime(next)
+                  } else if (timeChoices.length) {
+                    setTime(timeChoices[0])
+                  }
+                }
+              }}
+              disabled={false}
+              aria-busy={timesLoading}
+            >
+              <option value="">Select time…</option>
+              {timeChoices.map(t => (
+                <option key={t} value={t}>
+                  {t}
                 </option>
               ))}
             </select>

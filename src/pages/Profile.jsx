@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { useRooms } from '../lib/rooms'
 import {
@@ -8,101 +9,201 @@ import {
   timeUntil,
   buildSparklineData,
 } from '../lib/schedule'
+import { updateAttendanceApi, deleteRoomApi } from '../lib/api'
+
+function Sparkline({ data }) {
+  return (
+    <div className="sparkline">
+      {data.map(point => (
+        <div key={point.date} className="sparkline-bar">
+          <div
+            className="sparkline-fill"
+            style={{ height: `${Math.max(point.ratio * 100, 6)}%` }}
+            title={`${point.label}: ${point.count} room${point.count === 1 ? '' : 's'}`}
+          />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function ParticipantList({ room, ownerId }) {
+  const participants = room.participants || []
+  const { capacity, openSeats } = calculateOpenSeats(room)
+  const waitlisted = participants.length > capacity
+
+  const avatars = participants.slice(0, 12).map(sid => {
+    const initials = sid.slice(0, 2).toUpperCase()
+    const colorIndex = (sid.charCodeAt(0) + sid.charCodeAt(sid.length - 1)) % 6
+    const title = sid === ownerId ? `${sid} (Host)` : sid
+    return (
+      <span key={sid} className={`participant-avatar color-${colorIndex}`} title={title} aria-label={`Participant ${sid}`}>
+        {initials}
+      </span>
+    )
+  })
+
+  if (avatars.length === 0) {
+    avatars.push(<span key="empty" className="participant-avatar empty">—</span>)
+  }
+
+  return (
+    <div className={`profile-participants ${waitlisted ? 'is-waitlisted' : ''}`}>
+      <div className="participants-avatars">
+        {avatars}
+      </div>
+      <div className="participants-meta">
+        <span>{participants.length} joined</span>
+        {waitlisted && <span className="badge badge-danger">Waitlist</span>}
+        {!waitlisted && openSeats <= Math.ceil(capacity * 0.2) && (
+          <span className="badge badge-warn">Nearly full</span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function CardSkeleton() {
+  return (
+    <article className="profile-card skeleton" aria-hidden="true">
+      <div className="profile-card-header skeleton-text" />
+      <div className="profile-card-meta skeleton-text" />
+      <div className="profile-card-body">
+        <span className="skeleton-text" style={{ width: '60%' }} />
+        <span className="skeleton-text" style={{ width: '40%' }} />
+      </div>
+      <div className="profile-card-actions">
+        <span className="skeleton-btn" />
+        <span className="skeleton-btn" />
+      </div>
+    </article>
+  )
+}
 
 export default function Profile(){
   const { studentId } = useAuth()
-  const { rooms, isLoading } = useRooms()
+  const { rooms, isLoading, setRooms, refresh, supportsApi } = useRooms()
+  const navigate = useNavigate()
 
-  const owned = useMemo(()=> rooms.filter(r => r.owner_id === studentId), [rooms, studentId])
-  const joined = useMemo(()=>
-    rooms.filter(r => r.owner_id !== studentId && (r.participants||[]).includes(studentId)),
-  [rooms, studentId])
+  const owned = useMemo(() => rooms.filter(r => r.owner_id === studentId), [rooms, studentId])
+  const joined = useMemo(
+    () => rooms.filter(r => r.owner_id !== studentId && (r.participants || []).includes(studentId)),
+    [rooms, studentId]
+  )
   const ownedSparkline = useMemo(() => buildSparklineData(owned), [owned])
   const joinedSparkline = useMemo(() => buildSparklineData(joined), [joined])
 
-  function Sparkline({ data }){
-    return (
-      <div className="sparkline">
-        {data.map(point => (
-          <div key={point.date} className="sparkline-bar">
-            <div
-              className="sparkline-fill"
-              style={{ height: `${Math.max(point.ratio * 100, 6)}%` }}
-              title={`${point.label}: ${point.count} room${point.count === 1 ? '' : 's'}`}
-            />
-          </div>
-        ))}
-      </div>
-    )
+  const handleCancel = async room => {
+    if (typeof window !== 'undefined' && !window.confirm('Cancel this room? Participants will lose access.')) return
+    if (supportsApi) {
+      try {
+        await deleteRoomApi(room.id, studentId)
+        await refresh()
+        return
+      } catch (err) {
+        console.warn('Cancel via API failed, updating locally', err)
+      }
+    }
+    setRooms(prev => prev.filter(r => r.id !== room.id))
   }
 
-  function Table({ rows, emptyLabel }){
+  const handleLeave = async room => {
+    if (supportsApi) {
+      try {
+        await updateAttendanceApi(room.id, studentId, 'leave')
+        await refresh()
+        return
+      } catch (err) {
+        console.warn('Leave via API failed, updating locally', err)
+      }
+    }
+    setRooms(prev => prev.map(r => {
+      if (r.id !== room.id) return r
+      return { ...r, participants: (r.participants || []).filter(p => p !== studentId) }
+    }))
+  }
+
+  const handleShare = room => {
+    const shareUrl = `${window.location.origin}/join`
+    if (navigator.share) {
+      navigator.share({ title: room.name, url: shareUrl }).catch(() => {})
+    } else if (typeof window !== 'undefined') {
+      window.prompt('Copy link to share', shareUrl)
+    }
+  }
+
+  const duplicateRoom = room => {
+    navigate('/create', { state: { duplicateRoomId: room.id } })
+  }
+
+  const viewDetails = room => {
+    navigate('/join', { state: { focusRoomId: room.id } })
+  }
+
+  const renderCards = (roomsList, variant, emptyLabel) => {
     if (isLoading) {
       return (
-        <div className="table-skeleton" aria-hidden="true">
-          {Array.from({ length: 3 }).map((_, idx) => (
-            <div key={idx} className="table-skeleton-row">
-              {Array.from({ length: 7 }).map((__, colIdx) => (
-                <span key={colIdx} className="skeleton skeleton-text" />
-              ))}
-            </div>
-          ))}
+        <div className="profile-cards" aria-live="polite">
+          {Array.from({ length: 3 }).map((_, idx) => <CardSkeleton key={idx} />)}
         </div>
       )
     }
-    if (rows.length === 0) {
+    if (roomsList.length === 0) {
       return <div className="empty small">{emptyLabel}</div>
     }
     return (
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Location</th>
-            <th>Starts</th>
-            <th>Capacity</th>
-            <th>Duration</th>
-            <th>Privacy</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(r => {
-            const start = new Date(r.time.replace(' ','T'))
-            const end = new Date(start.getTime() + r.duration*60000)
-            const typeLabel = getTypeLabel(r.type)
-            const { capacity, openSeats } = calculateOpenSeats(r)
-            const nearlyFull = isNearlyFull(r)
-            const relative = timeUntil(start)
-            const participants = (r.participants || []).length
-            return (
-              <tr key={r.id} className={nearlyFull ? 'table-row-warning' : ''}>
-                <td>
-                  <div className="profile-room-name">
-                    <div className="profile-room-title">{r.name}</div>
-                    <div className="profile-room-subtitle">{participants} joined</div>
-                  </div>
-                </td>
-                <td><span className="badge badge-neutral">{typeLabel}</span></td>
-                <td>{r.location}</td>
-                <td>
-                  <div className="profile-room-status">
-                    <span className="profile-room-time">{start.toLocaleString()}</span>
-                    <span className="profile-room-relative">{relative}</span>
-                  </div>
-                </td>
-                <td>
-                  <span className={`badge ${openSeats === 0 ? 'badge-danger' : openSeats <= Math.ceil(capacity * 0.2) ? 'badge-warn' : 'badge-success'}`}>
-                    {openSeats} open of {capacity}
-                  </span>
-                </td>
-                <td>{r.duration} min</td>
-                <td>{(r.privacy||'public').toUpperCase()[0]+(r.privacy||'public').slice(1)}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+      <div className="profile-cards" aria-live="polite">
+        {roomsList.map(room => {
+          const start = new Date(room.time.replace(' ', 'T'))
+          const relative = timeUntil(start)
+          const typeLabel = getTypeLabel(room.type)
+          const { capacity, openSeats } = calculateOpenSeats(room)
+          const nearlyFull = isNearlyFull(room)
+
+          return (
+            <article key={room.id} className={`profile-card ${nearlyFull ? 'profile-card-warning' : ''}`}>
+              <header className="profile-card-header">
+                <div>
+                  <h4>{room.name}</h4>
+                  <div className="profile-card-subtitle">{typeLabel} • {room.location}</div>
+                </div>
+                  <span className="badge badge-neutral">{room.privacy}</span>
+              </header>
+              <div className="profile-card-meta">
+                <div>
+                  <span className="profile-card-time">{start.toLocaleString()}</span>
+                  <span className="profile-card-relative">{relative}</span>
+                </div>
+                <span className={`badge ${openSeats === 0 ? 'badge-danger' : openSeats <= Math.ceil(capacity * 0.2) ? 'badge-warn' : 'badge-success'}`}>
+                  {openSeats} open of {capacity}
+                </span>
+              </div>
+              <ParticipantList room={room} ownerId={room.owner_id} />
+              <div className="profile-card-actions">
+                <button type="button" className="btn btn-ghost" onClick={() => viewDetails(room)}>
+                  View details
+                </button>
+                {variant === 'owned' ? (
+                  <>
+                    <button type="button" className="btn btn-danger" onClick={() => handleCancel(room)}>
+                      Cancel room
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button type="button" className="btn btn-ghost" onClick={() => handleLeave(room)}>
+                      Leave room
+                    </button>
+                    <button type="button" className="btn btn-primary" onClick={() => handleShare(room)}>
+                      Share
+                    </button>
+                  </>
+                )}
+              </div>
+            </article>
+          )
+        })}
+      </div>
     )
   }
 
@@ -112,10 +213,10 @@ export default function Profile(){
         <div className="profile-header">Logged in as: <strong>{studentId}</strong></div>
         <h3>Rooms You Own</h3>
         {isLoading ? <div className="sparkline skeleton" aria-hidden="true" /> : <Sparkline data={ownedSparkline} />}
-        <Table rows={owned} emptyLabel="You haven't created any rooms yet." />
+        {renderCards(owned, 'owned', "You haven't created any rooms yet.")}
         <h3>Rooms You Joined</h3>
         {isLoading ? <div className="sparkline skeleton" aria-hidden="true" /> : <Sparkline data={joinedSparkline} />}
-        <Table rows={joined} emptyLabel="You haven't joined any rooms yet." />
+        {renderCards(joined, 'joined', "You haven't joined any rooms yet.")}
       </div>
     </div>
   )

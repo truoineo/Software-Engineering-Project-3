@@ -9,6 +9,7 @@ import {
   summarizeLocationLoad,
   listAvailableDates,
 } from '../lib/schedule'
+import { updateAttendanceApi } from '../lib/api'
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 function fmtDateTime(ts){
@@ -21,7 +22,7 @@ function fmtDateTime(ts){
 
 export default function Join(){
   const { studentId } = useAuth()
-  const { rooms, setRooms, isLoading } = useRooms()
+  const { rooms, setRooms, refresh, isLoading, supportsApi } = useRooms()
 
   const [typeFilter, setTypeFilter] = useState('all')
   const HEATMAP_WINDOW_DAYS = 21
@@ -72,7 +73,17 @@ export default function Join(){
     })
   }, [sortedRooms])
 
-  function toggle(room){
+  async function toggle(room){
+    const joined = (room.participants || []).includes(studentId)
+    if (supportsApi) {
+      try {
+        await updateAttendanceApi(room.id, studentId, joined ? 'leave' : 'join')
+        await refresh()
+        return
+      } catch (err) {
+        console.warn('Join toggle via API failed, falling back to local storage', err)
+      }
+    }
     setRooms(prev => prev.map(r => {
       if (r.id !== room.id) return r
       const set = new Set(r.participants || [])

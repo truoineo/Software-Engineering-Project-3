@@ -33,6 +33,9 @@ class TimeSlot(BaseModel):
     players_id: List[str] = Field(default_factory=list)  # List of student IDs who have reserved this timeslot
     status: str = "available"  # "available" or "full"
     type: Literal["private", "public"] = "public"  # Set by first player: "private" or "public"
+    owner_id: str | None = None
+    room_name: str | None = None
+    duration_min: int | None = None
 
 
 # --- CourtReservations model ---
