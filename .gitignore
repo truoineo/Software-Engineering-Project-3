@@ -34,7 +34,6 @@ Thumbs.db
 
 # Local data from prior Python app
 storage.json
-backend/storage/reservations/
 
 venv/
 # Byte-compiled / optimized / DLL files
