@@ -42,8 +42,11 @@ async function request(path, options = {}) {
   return data
 }
 
-export async function fetchRoomsFromApi() {
-  const data = await request('/rooms', { method: 'GET' })
+export async function fetchRoomsFromApi(studentId) {
+  const params = new URLSearchParams()
+  if (studentId) params.append('student_id', studentId)
+  const suffix = params.toString() ? `?${params.toString()}` : ''
+  const data = await request(`/rooms${suffix}`, { method: 'GET' })
   return data?.rooms || []
 }
 
@@ -55,10 +58,12 @@ export async function createRoomApi(payload) {
   return data?.room
 }
 
-export async function updateAttendanceApi(roomId, studentId, action) {
+export async function updateAttendanceApi(roomId, studentId, action, { accessCode } = {}) {
+  const body = { student_id: studentId, action }
+  if (accessCode) body.access_code = accessCode
   const data = await request(`/rooms/${roomId}/attendees`, {
     method: 'POST',
-    body: { student_id: studentId, action },
+    body,
   })
   return data?.room
 }
@@ -67,6 +72,14 @@ export async function deleteRoomApi(roomId, studentId) {
   await request(`/rooms/${roomId}?${new URLSearchParams({ student_id: studentId })}`, {
     method: 'DELETE',
   })
+}
+
+export async function lookupPrivateRoom(accessCode) {
+  const data = await request('/rooms/private-access', {
+    method: 'POST',
+    body: { access_code: accessCode },
+  })
+  return data?.room
 }
 
 export async function fetchProfileApi(studentId) {

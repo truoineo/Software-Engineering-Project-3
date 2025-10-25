@@ -8,6 +8,8 @@ class CourtType(str, Enum):
     BASKETBALL = "Basketball"
     SOCCER = "Soccer"
     FOOTBALL = "Football"
+    BASEBALL = "Baseball"
+    GOLF = "Golf"
     TENNIS = "Tennis"
     VOLLEYBALL = "Volleyball"
 
@@ -36,6 +38,7 @@ class TimeSlot(BaseModel):
     owner_id: str | None = None
     room_name: str | None = None
     duration_min: int | None = None
+    access_code: str | None = None
 
 
 # --- CourtReservations model ---

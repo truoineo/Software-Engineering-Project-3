@@ -8,13 +8,21 @@ import json
 import re
 from typing import Optional, Literal
 import sys
+import random
+
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from storage.storage_template import DailyReservations, CourtReservations, TimeSlot, CourtType, Users, User
+def generate_access_code(length: int = 6) -> str:
+    """Generate a human-friendly access code (no ambiguous characters)."""
+    alphabet = "ABCDEFGHJKMNPQRSTVWXYZ23456789"
+    return "".join(random.choice(alphabet) for _ in range(length))
 
-# Storage directory
+
+# Storage directories
 STORAGE_DIR = Path(__file__).parent.parent / "storage"
+RESERVATIONS_DIR = STORAGE_DIR / "reservations"
 USERS_FILE = STORAGE_DIR / "users.json"
 
 
@@ -132,7 +140,7 @@ def get_reservation_filename(date: datetime) -> str:
 
 def get_reservation_filepath(date: datetime) -> Path:
     """Get the full path to a date's reservation file"""
-    return STORAGE_DIR / get_reservation_filename(date)
+    return RESERVATIONS_DIR / get_reservation_filename(date)
 
 
 def load_daily_reservations(date: datetime) -> Optional[DailyReservations]:
@@ -171,10 +179,10 @@ def save_daily_reservations(date: datetime, reservations: DailyReservations) -> 
         True if successful, False otherwise
     """
     filepath = get_reservation_filepath(date)
-    
+
     try:
-        # Ensure storage directory exists
-        STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+        # Ensure reservations directory exists
+        RESERVATIONS_DIR.mkdir(parents=True, exist_ok=True)
         
         with open(filepath, 'w') as f:
             json.dump(reservations.model_dump(), f, indent=2)
@@ -191,14 +199,14 @@ def cleanup_old_reservations() -> int:
     Returns:
         Number of files deleted
     """
-    if not STORAGE_DIR.exists():
+    if not RESERVATIONS_DIR.exists():
         return 0
     
     today = datetime.now().date()
     deleted_count = 0
     
     # Find all reservation files
-    for filepath in STORAGE_DIR.glob("reservations_*.json"):
+    for filepath in RESERVATIONS_DIR.glob("reservations_*.json"):
         try:
             # Extract date from filename
             filename = filepath.stem  # "reservations_2025-10-21"
@@ -317,6 +325,7 @@ def add_player_to_timeslot(
     timeslot_type: Literal["private", "public"] = "public",
     room_name: str | None = None,
     duration_min: int | None = None,
+    access_code: str | None = None,
 ) -> dict:
     """
     Add a player to a specific timeslot and auto-update status.
@@ -368,8 +377,11 @@ def add_player_to_timeslot(
         return {"success": False, "message": "Timeslot is full"}
     
     # Check if trying to join a private timeslot
+    code = (access_code or "").strip().upper() or None
+
     if slot.type == "private" and len(slot.players_id) > 0:
-        return {"success": False, "message": "This is a private timeslot"}
+        if not code or slot.access_code != code:
+            return {"success": False, "message": "Invalid or missing access code for this private room."}
     
     # Set type if this is the first player
     is_first_player = len(slot.players_id) == 0
@@ -378,10 +390,17 @@ def add_player_to_timeslot(
         slot.owner_id = user_id
         slot.room_name = room_name or f"{court_name} {timeslot}"
         slot.duration_min = duration_min
+        if timeslot_type == "private":
+            slot.access_code = code or generate_access_code()
+        else:
+            slot.access_code = None
     else:
         # Ensure room metadata stays populated even if not set previously
         if not slot.room_name and room_name:
             slot.room_name = room_name
+        # Preserve access code if joining private room with valid code
+        if slot.type == "private" and slot.access_code:
+            code = slot.access_code
     
     # Add player
     slot.players_id.append(user_id)
@@ -406,6 +425,8 @@ def add_player_to_timeslot(
         
         if is_first_player:
             result["message"] += f" (Set as {timeslot_type})"
+            if slot.type == "private" and slot.access_code:
+                result["access_code"] = slot.access_code
         
         if is_new_user:
             result["new_user_registered"] = True
@@ -463,6 +484,7 @@ def remove_player_from_timeslot(
             slot.room_name = None
             slot.type = "public"
             slot.duration_min = None
+            slot.access_code = None
     
     # Auto-update status
     sync_timeslot_status(slot, court.capacity)
@@ -506,6 +528,7 @@ def clear_timeslot(
     slot.owner_id = None
     slot.room_name = None
     slot.duration_min = None
+    slot.access_code = None
 
     if save_daily_reservations(date, reservations):
         return {"success": True}
@@ -538,6 +561,7 @@ def list_reservations_between(start_date: datetime, days: int = 7) -> list[dict]
                     "privacy": slot.type,
                     "duration_min": slot.duration_min,
                     "status": slot.status,
+                    "access_code": slot.access_code,
                 })
     return results
 

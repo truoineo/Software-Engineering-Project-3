@@ -3,30 +3,52 @@ import { loadRooms } from './storage'
 export const SLOT_MINUTES = 30
 export const MAX_DURATION_MIN = 60
 
+const ALL_LOCATIONS = [
+  'Tennis Courts',
+  'Armington Physical Education Center',
+  'L.C. Boles Golf Course',
+  'Cindy Barr Field',
+  'Carl W. Dale Soccer Field',
+  'Murray Baseball Field',
+  'Papp Stadium',
+  'Scot Center',
+  'Softball Diamond',
+  'Timken Gymnasium',
+]
+
 const BASE_TYPE_LOCATION_MAP = {
-  soccer: ['Soccer Field A', 'Soccer Field B', 'Soccer Field C'],
-  football: ['North Field', 'South Field'],
-  basketball: ['Gym Court 1', 'Gym Court 2'],
+  soccer: ['Carl W. Dale Soccer Field', 'Cindy Barr Field', 'Papp Stadium* ∆', 'Scot Center'],
+  football: ['Papp Stadium', 'Cindy Barr Field', 'Armington Physical Education Center'],
+  basketball: ['Scot Center', 'Timken Gymnasium', 'Armington Physical Education Center'],
+  baseball: ['Murray Baseball Field', 'Softball Diamond'],
+  golf: ['L.C. Boles Golf Course'],
+  tennis: ['Tennis Courts'],
 }
 
-const ALL_LOCATIONS = Array.from(new Set(Object.values(BASE_TYPE_LOCATION_MAP).flat()))
+const ALL_UNIQUE_LOCATIONS = Array.from(new Set([...ALL_LOCATIONS, ...Object.values(BASE_TYPE_LOCATION_MAP).flat()]))
 const TYPE_LOCATION_MAP = {
   ...BASE_TYPE_LOCATION_MAP,
-  general: ALL_LOCATIONS,
+  general: ALL_UNIQUE_LOCATIONS,
 }
 
 const TYPE_CAPACITY = {
-  soccer: 16,
-  football: 22,
-  basketball: 10,
-  general: 12,
+  soccer: 22,
+  football: 28,
+  basketball: 18,
+  baseball: 20,
+  golf: 12,
+  tennis: 8,
+  general: 16,
 }
 
-export const LOCATION_OPTIONS = ALL_LOCATIONS
+export const LOCATION_OPTIONS = ALL_UNIQUE_LOCATIONS
 export const TYPE_OPTIONS = [
   { value: 'soccer', label: 'Soccer' },
   { value: 'football', label: 'Football' },
   { value: 'basketball', label: 'Basketball' },
+  { value: 'baseball', label: 'Baseball' },
+  { value: 'golf', label: 'Golf' },
+  { value: 'tennis', label: 'Tennis' },
   { value: 'general', label: 'General' },
 ]
 export const DEFAULT_TYPE = TYPE_OPTIONS[0]?.value ?? 'general'
@@ -45,6 +67,9 @@ const TYPE_ICON = {
   soccer: '⚽',
   football: '🏈',
   basketball: '🏀',
+  baseball: '⚾',
+  golf: '⛳',
+  tennis: '🎾',
   general: '🏟️',
 }
 

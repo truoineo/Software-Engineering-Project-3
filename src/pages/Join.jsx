@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useCallback } from 'react'
 import { useAuth } from '../lib/auth'
 import { useRooms } from '../lib/rooms'
 import {
@@ -9,7 +9,9 @@ import {
   summarizeLocationLoad,
   listAvailableDates,
 } from '../lib/schedule'
-import { updateAttendanceApi } from '../lib/api'
+import { updateAttendanceApi, lookupPrivateRoom } from '../lib/api'
+import LocationPreview from '../components/LocationPreview'
+import LocationLinkWithPreview from '../components/LocationLinkWithPreview'
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 function fmtDateTime(ts){
@@ -25,7 +27,18 @@ export default function Join(){
   const { rooms, setRooms, refresh, isLoading, supportsApi } = useRooms()
 
   const [typeFilter, setTypeFilter] = useState('all')
+  const [isLocationModalOpen, setLocationModalOpen] = useState(false)
+  const [modalLocation, setModalLocation] = useState(null)
+  const [inviteCode, setInviteCode] = useState('')
+  const [inviteLookup, setInviteLookup] = useState(null)
+  const [inviteError, setInviteError] = useState('')
+  const [inviteLoading, setInviteLoading] = useState(false)
   const HEATMAP_WINDOW_DAYS = 21
+
+  const unlockedRoom = inviteLookup?.room || null
+  const unlockedSeatSnapshot = useMemo(() => (unlockedRoom ? calculateOpenSeats(unlockedRoom) : null), [unlockedRoom])
+  const unlockedParticipants = unlockedRoom ? (unlockedRoom.participants || []).length : 0
+  const unlockedJoined = unlockedRoom ? (unlockedRoom.participants || []).includes(studentId) : false
 
   const filterOptions = useMemo(() => [
     { value: 'all', label: 'All types' },
@@ -59,10 +72,15 @@ export default function Join(){
     return [...rooms].sort((a, b) => a.time.localeCompare(b.time))
   }, [rooms])
 
+  const publicRooms = useMemo(
+    () => sortedRooms.filter(r => (r.privacy || 'public') !== 'private'),
+    [sortedRooms]
+  )
+
   const filteredRooms = useMemo(() => {
-    if (typeFilter === 'all') return sortedRooms
-    return sortedRooms.filter(r => (r.type || 'general') === typeFilter)
-  }, [sortedRooms, typeFilter])
+    if (typeFilter === 'all') return publicRooms
+    return publicRooms.filter(r => (r.type || 'general') === typeFilter)
+  }, [publicRooms, typeFilter])
 
   const warningLocations = useMemo(() => {
     const summary = summarizeLocationLoad(sortedRooms)
@@ -73,12 +91,20 @@ export default function Join(){
     })
   }, [sortedRooms])
 
-  async function toggle(room){
+  async function toggle(room, accessCode){
     const joined = (room.participants || []).includes(studentId)
+    if (room.privacy === 'private' && !joined && !accessCode) {
+      setInviteError('Enter a valid invite code to join this private room.')
+      return
+    }
     if (supportsApi) {
       try {
-        await updateAttendanceApi(room.id, studentId, joined ? 'leave' : 'join')
+        await updateAttendanceApi(room.id, studentId, joined ? 'leave' : 'join', { accessCode })
         await refresh()
+        if (!joined && accessCode) {
+          setInviteLookup(null)
+          setInviteCode('')
+        }
         return
       } catch (err) {
         console.warn('Join toggle via API failed, falling back to local storage', err)
@@ -89,13 +115,104 @@ export default function Join(){
       const set = new Set(r.participants || [])
       if (set.has(studentId)) set.delete(studentId)
       else set.add(studentId)
-      return { ...r, participants: Array.from(set) }
+      const next = { ...r, participants: Array.from(set) }
+      if (accessCode && r.privacy === 'private' && !r.access_code) {
+        next.access_code = accessCode
+      }
+      return next
     }))
   }
+
+  const handlePrivateLookup = async event => {
+    event?.preventDefault()
+    const normalized = inviteCode.trim().toUpperCase()
+    if (!normalized) {
+      setInviteError('Enter the invite code you received.')
+      setInviteLookup(null)
+      return
+    }
+    setInviteLoading(true)
+    setInviteError('')
+    try {
+      let room
+      if (supportsApi) {
+        room = await lookupPrivateRoom(normalized)
+      } else {
+        room = rooms.find(r => (r.access_code || '').toUpperCase() === normalized)
+        if (!room) {
+          throw new Error('No private room matches that code.')
+        }
+      }
+      if (!room) {
+        setInviteError('No private room matches that code.')
+        setInviteLookup(null)
+      } else {
+        setInviteLookup({ room, accessCode: normalized })
+      }
+    } catch (err) {
+      const message = err?.status === 404 ? 'No private room matches that code.' : (err?.message || 'Unable to unlock that room right now.')
+      setInviteError(message)
+      setInviteLookup(null)
+    } finally {
+      setInviteLoading(false)
+    }
+  }
+
+  const openLocationModal = useCallback(location => {
+    setModalLocation(location)
+    setLocationModalOpen(true)
+  }, [])
+
+  const closeLocationModal = useCallback(() => {
+    setLocationModalOpen(false)
+    setModalLocation(null)
+  }, [])
 
   return (
     <div className="page">
       <h2>Available Rooms</h2>
+      <section className="private-access" aria-labelledby="private-access-heading">
+        <div className="private-access-header">
+          <h3 id="private-access-heading">Have an invite code?</h3>
+          <p>Unlock a private lobby by entering the code shared by the host.</p>
+        </div>
+        <form className="private-access-form" onSubmit={handlePrivateLookup}>
+          <input
+            type="text"
+            inputMode="text"
+            autoComplete="off"
+            className="select"
+            value={inviteCode}
+            onChange={e => {
+              setInviteCode(e.target.value.toUpperCase())
+              setInviteError('')
+            }}
+            placeholder="Enter code"
+            aria-label="Invite code"
+          />
+          <button type="submit" className="btn btn-primary" disabled={inviteLoading}>
+            {inviteLoading ? 'Checking…' : 'Unlock'}
+          </button>
+        </form>
+        {inviteError && <p className="field-hint error" role="alert">{inviteError}</p>}
+        {unlockedRoom && unlockedSeatSnapshot && (
+          <div className="private-access-result" aria-live="polite">
+            <JoinRoomCard
+              room={unlockedRoom}
+              typeLabel={getTypeLabel(unlockedRoom.type)}
+              joined={unlockedJoined}
+              capacity={unlockedSeatSnapshot.capacity}
+              openSeats={unlockedSeatSnapshot.openSeats}
+              nearlyFull={isNearlyFull(unlockedRoom)}
+              metaDetails={`${fmtDateTime(unlockedRoom.time)} • ${unlockedRoom.duration} min • Private • ${unlockedParticipants} joined`}
+              onToggle={toggle}
+              onOpenLocation={openLocationModal}
+              dialogOpen={isLocationModalOpen}
+              accessCode={inviteLookup?.accessCode}
+            />
+          </div>
+        )}
+      </section>
       <div className="availability-heatmap" aria-label="Upcoming room availability heatmap">
         <div className="heatmap-header">
           <span>Upcoming activity</span>
@@ -157,35 +274,86 @@ export default function Join(){
             ))}
           </>
         )}
-        {!isLoading && filteredRooms.map(r => {
-          const privacy = (r.privacy||'public')
-          const participants = (r.participants||[]).length
-          const joined = (r.participants||[]).includes(studentId)
-          const typeLabel = getTypeLabel(r.type)
-          const { capacity, openSeats } = calculateOpenSeats(r)
-          const nearlyFull = isNearlyFull(r)
+        {!isLoading && filteredRooms.map(room => {
+          const privacy = (room.privacy || 'public')
+          const participants = (room.participants || []).length
+          const joined = (room.participants || []).includes(studentId)
+          const typeLabel = getTypeLabel(room.type)
+          const { capacity, openSeats } = calculateOpenSeats(room)
+          const nearlyFull = isNearlyFull(room)
+          const metaDetails = `${fmtDateTime(room.time)} • ${room.duration} min • ${privacy.charAt(0).toUpperCase()+privacy.slice(1)} • ${participants} joined`
           return (
-            <div key={r.id} className={`room-card ${nearlyFull ? 'room-card-warning' : ''}`}>
-              <div className="room-info">
-                <div className="room-title">{r.name}</div>
-                <div className="room-badges">
-                  <span className="badge badge-neutral">{typeLabel}</span>
-                  <span className={`badge ${openSeats === 0 ? 'badge-danger' : openSeats <= Math.ceil(capacity * 0.2) ? 'badge-warn' : 'badge-success'}`}>
-                    {openSeats} open of {capacity}
-                  </span>
-                </div>
-                <div className="room-meta">
-                  {r.location} • {fmtDateTime(r.time)} • {r.duration} min • {privacy.charAt(0).toUpperCase()+privacy.slice(1)} • {participants} joined
-                </div>
-              </div>
-              <button className={`btn ${joined ? 'btn-danger' : 'btn-primary'} room-join`} onClick={()=>toggle(r)}>
-                {joined ? 'Leave' : 'Join'}
-              </button>
-            </div>
+            <JoinRoomCard
+              key={room.id}
+              room={room}
+              typeLabel={typeLabel}
+              joined={joined}
+              capacity={capacity}
+              openSeats={openSeats}
+              nearlyFull={nearlyFull}
+              metaDetails={metaDetails}
+              onToggle={toggle}
+              onOpenLocation={openLocationModal}
+              dialogOpen={isLocationModalOpen}
+            />
           )
         })}
         {!isLoading && filteredRooms.length===0 && <div className="empty">No rooms yet. Create one!</div>}
       </div>
+      <LocationPreview
+        location={modalLocation}
+        open={isLocationModalOpen}
+        onClose={closeLocationModal}
+      />
+    </div>
+  )
+}
+
+function JoinRoomCard({
+  room,
+  typeLabel,
+  joined,
+  capacity,
+  openSeats,
+  nearlyFull,
+  metaDetails,
+  onToggle,
+  onOpenLocation,
+  dialogOpen,
+  accessCode,
+}) {
+  const handleLocationClick = useCallback(() => {
+    onOpenLocation(room.location)
+  }, [onOpenLocation, room.location])
+
+  return (
+    <div className={`room-card ${nearlyFull ? 'room-card-warning' : ''}`}>
+      <div className="room-info">
+        <div className="room-title">{room.name}</div>
+        <div className="room-badges">
+          <span className="badge badge-neutral">{typeLabel}</span>
+          <span className={`badge ${openSeats === 0 ? 'badge-danger' : openSeats <= Math.ceil(capacity * 0.2) ? 'badge-warn' : 'badge-success'}`}>
+            {openSeats} open of {capacity}
+          </span>
+          {room.privacy === 'private' && <span className="badge badge-warn">Private</span>}
+        </div>
+        <div className="room-meta">
+          <LocationLinkWithPreview
+            location={room.location}
+            onClick={handleLocationClick}
+            dialogOpen={dialogOpen}
+            className="location-trigger"
+          />
+          <span aria-hidden="true">•</span>
+          <span className="room-meta-text">{metaDetails}</span>
+        </div>
+      </div>
+      <button
+        className={`btn ${joined ? 'btn-danger' : 'btn-primary'} room-join`}
+        onClick={() => onToggle(room, accessCode)}
+      >
+        {joined ? 'Leave' : 'Join'}
+      </button>
     </div>
   )
 }

@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { loadRooms, saveRooms, ROOMS_UPDATED_EVENT } from './storage'
 import { fetchRoomsFromApi } from './api'
+import { useAuth } from './auth'
 
 const RoomsCtx = createContext(null)
 
 export function RoomsProvider({ children }) {
+  const { studentId } = useAuth()
   const [rooms, setRoomsState] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [supportsApi, setSupportsApi] = useState(true)
@@ -13,7 +15,7 @@ export function RoomsProvider({ children }) {
   const syncFromStorage = useCallback(async () => {
     setIsLoading(true)
     try {
-      const fromApi = await fetchRoomsFromApi()
+      const fromApi = await fetchRoomsFromApi(studentId)
       setSupportsApi(true)
       setRoomsState(fromApi)
       saveRooms(fromApi)
@@ -27,7 +29,7 @@ export function RoomsProvider({ children }) {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [studentId])
 
   useEffect(() => {
     if (typeof window === 'undefined') return

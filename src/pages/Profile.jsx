@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { useRooms } from '../lib/rooms'
@@ -10,6 +10,9 @@ import {
   buildSparklineData,
 } from '../lib/schedule'
 import { updateAttendanceApi, deleteRoomApi } from '../lib/api'
+import LocationPreview from '../components/LocationPreview'
+import LocationLinkWithPreview from '../components/LocationLinkWithPreview'
+import WeatherWidget from '../components/WeatherWidget'
 
 function Sparkline({ data }) {
   return (
@@ -24,6 +27,92 @@ function Sparkline({ data }) {
         </div>
       ))}
     </div>
+  )
+}
+
+function ProfileRoomCard({
+  room,
+  typeLabel,
+  start,
+  relative,
+  capacity,
+  openSeats,
+  nearlyFull,
+  variant,
+  onViewDetails,
+  onCancel,
+  onLeave,
+  onShare,
+  onOpenLocation,
+  dialogOpen,
+}) {
+  const handleLocationClick = useCallback(() => {
+    onOpenLocation(room.location)
+  }, [onOpenLocation, room.location])
+
+  const showWeather = useMemo(() => {
+    if (!room?.location || !(start instanceof Date)) return false
+    return start.getTime() > Date.now()
+  }, [room?.location, start])
+
+  return (
+    <article className={`profile-card ${nearlyFull ? 'profile-card-warning' : ''}`}>
+      <header className="profile-card-header">
+        <div>
+          <h4>{room.name}</h4>
+          <div className="profile-card-subtitle">
+            <span className="profile-card-type">{typeLabel}</span>
+            <span aria-hidden="true">•</span>
+            <LocationLinkWithPreview
+              location={room.location}
+              onClick={handleLocationClick}
+              dialogOpen={dialogOpen}
+              className="location-trigger"
+            />
+          </div>
+        </div>
+        <span className="badge badge-neutral">{room.privacy}</span>
+      </header>
+      <div className="profile-card-meta">
+        <div>
+          <span className="profile-card-time">{start.toLocaleString()}</span>
+          <span className="profile-card-relative">{relative}</span>
+        </div>
+        <span className={`badge ${openSeats === 0 ? 'badge-danger' : openSeats <= Math.ceil(capacity * 0.2) ? 'badge-warn' : 'badge-success'}`}>
+          {openSeats} open of {capacity}
+        </span>
+              {room.privacy === 'private' && room.access_code && (
+                <span className="badge badge-warn" title="Invite code">Code: {room.access_code}</span>
+              )}
+      </div>
+      {showWeather && (
+        <WeatherWidget
+          variant="profile"
+          location={room.location}
+          dateTime={start}
+        />
+      )}
+      <ParticipantList room={room} ownerId={room.owner_id} />
+      <div className="profile-card-actions">
+        <button type="button" className="btn btn-ghost" onClick={() => onViewDetails(room)}>
+          View details
+        </button>
+        {variant === 'owned' ? (
+          <button type="button" className="btn btn-danger" onClick={() => onCancel(room)}>
+            Cancel room
+          </button>
+        ) : (
+          <>
+            <button type="button" className="btn btn-ghost" onClick={() => onLeave(room)}>
+              Leave room
+            </button>
+            <button type="button" className="btn btn-primary" onClick={() => onShare(room)}>
+              Share
+            </button>
+          </>
+        )}
+      </div>
+    </article>
   )
 }
 
@@ -81,9 +170,11 @@ function CardSkeleton() {
 }
 
 export default function Profile(){
-  const { studentId } = useAuth()
-  const { rooms, isLoading, setRooms, refresh, supportsApi } = useRooms()
   const navigate = useNavigate()
+  const { studentId, setStudentId } = useAuth()
+  const { rooms, isLoading, setRooms, refresh, supportsApi } = useRooms()
+  const [isLocationModalOpen, setLocationModalOpen] = useState(false)
+  const [modalLocation, setModalLocation] = useState(null)
 
   const owned = useMemo(() => rooms.filter(r => r.owner_id === studentId), [rooms, studentId])
   const joined = useMemo(
@@ -125,20 +216,44 @@ export default function Profile(){
 
   const handleShare = room => {
     const shareUrl = `${window.location.origin}/join`
+    const shareText = room.privacy === 'private' && room.access_code
+      ? `${room.name} · Invite code: ${room.access_code}`
+      : room.name
     if (navigator.share) {
-      navigator.share({ title: room.name, url: shareUrl }).catch(() => {})
+      navigator.share({ title: shareText, text: shareText, url: shareUrl }).catch(() => {})
     } else if (typeof window !== 'undefined') {
-      window.prompt('Copy link to share', shareUrl)
+      const message = room.privacy === 'private' && room.access_code
+        ? `Share this invite:
+${shareUrl}
+Code: ${room.access_code}`
+        : shareUrl
+      window.prompt('Copy details to share', message)
     }
   }
 
-  const duplicateRoom = room => {
-    navigate('/create', { state: { duplicateRoomId: room.id } })
-  }
+  const openLocationModal = useCallback(location => {
+    setModalLocation(location)
+    setLocationModalOpen(true)
+  }, [])
 
-  const viewDetails = room => {
-    navigate('/join', { state: { focusRoomId: room.id } })
-  }
+  const closeLocationModal = useCallback(() => {
+    setLocationModalOpen(false)
+    setModalLocation(null)
+  }, [])
+
+  const viewDetails = useCallback(
+    room => {
+      if (!room?.location) return
+      openLocationModal(room.location)
+    },
+    [openLocationModal]
+  )
+
+  const handleLogout = useCallback(() => {
+    setStudentId('')
+    setRooms([])
+    navigate('/')
+  }, [navigate, setRooms, setStudentId])
 
   const renderCards = (roomsList, variant, emptyLabel) => {
     if (isLoading) {
@@ -161,46 +276,23 @@ export default function Profile(){
           const nearlyFull = isNearlyFull(room)
 
           return (
-            <article key={room.id} className={`profile-card ${nearlyFull ? 'profile-card-warning' : ''}`}>
-              <header className="profile-card-header">
-                <div>
-                  <h4>{room.name}</h4>
-                  <div className="profile-card-subtitle">{typeLabel} • {room.location}</div>
-                </div>
-                  <span className="badge badge-neutral">{room.privacy}</span>
-              </header>
-              <div className="profile-card-meta">
-                <div>
-                  <span className="profile-card-time">{start.toLocaleString()}</span>
-                  <span className="profile-card-relative">{relative}</span>
-                </div>
-                <span className={`badge ${openSeats === 0 ? 'badge-danger' : openSeats <= Math.ceil(capacity * 0.2) ? 'badge-warn' : 'badge-success'}`}>
-                  {openSeats} open of {capacity}
-                </span>
-              </div>
-              <ParticipantList room={room} ownerId={room.owner_id} />
-              <div className="profile-card-actions">
-                <button type="button" className="btn btn-ghost" onClick={() => viewDetails(room)}>
-                  View details
-                </button>
-                {variant === 'owned' ? (
-                  <>
-                    <button type="button" className="btn btn-danger" onClick={() => handleCancel(room)}>
-                      Cancel room
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button type="button" className="btn btn-ghost" onClick={() => handleLeave(room)}>
-                      Leave room
-                    </button>
-                    <button type="button" className="btn btn-primary" onClick={() => handleShare(room)}>
-                      Share
-                    </button>
-                  </>
-                )}
-              </div>
-            </article>
+            <ProfileRoomCard
+              key={room.id}
+              room={room}
+              typeLabel={typeLabel}
+              start={start}
+              relative={relative}
+              capacity={capacity}
+              openSeats={openSeats}
+              nearlyFull={nearlyFull}
+              variant={variant}
+              onViewDetails={viewDetails}
+              onCancel={handleCancel}
+              onLeave={handleLeave}
+              onShare={handleShare}
+              onOpenLocation={openLocationModal}
+              dialogOpen={isLocationModalOpen}
+            />
           )
         })}
       </div>
@@ -210,7 +302,12 @@ export default function Profile(){
   return (
     <div className="page">
       <div className="profile-box">
-        <div className="profile-header">Logged in as: <strong>{studentId}</strong></div>
+        <div className="profile-header">
+          <span>Logged in as: <strong>{studentId}</strong></span>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={handleLogout}>
+            Log out
+          </button>
+        </div>
         <h3>Rooms You Own</h3>
         {isLoading ? <div className="sparkline skeleton" aria-hidden="true" /> : <Sparkline data={ownedSparkline} />}
         {renderCards(owned, 'owned', "You haven't created any rooms yet.")}
@@ -218,6 +315,11 @@ export default function Profile(){
         {isLoading ? <div className="sparkline skeleton" aria-hidden="true" /> : <Sparkline data={joinedSparkline} />}
         {renderCards(joined, 'joined', "You haven't joined any rooms yet.")}
       </div>
+      <LocationPreview
+        location={modalLocation}
+        open={isLocationModalOpen}
+        onClose={closeLocationModal}
+      />
     </div>
   )
 }

@@ -60,7 +60,7 @@ function sanitizeRooms(candidate) {
     let capacity = Number.parseInt(typeof capacityRaw === 'string' ? capacityRaw.trim() : capacityRaw, 10)
     if (!Number.isFinite(capacity) || capacity <= 0) capacity = DEFAULT_CAPACITY[type]
 
-    sanitized.push({
+    const sanitizedRoom = {
       id,
       name,
       owner_id: ownerId,
@@ -71,7 +71,13 @@ function sanitizeRooms(candidate) {
       privacy,
       type,
       capacity,
-    })
+    }
+    const accessCode = coerceString(room.access_code)
+    if (privacy === 'private' && accessCode) {
+      sanitizedRoom.access_code = accessCode.toUpperCase()
+    }
+
+    sanitized.push(sanitizedRoom)
     seenIds.add(id)
   }
   return sanitized

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { useRooms } from '../lib/rooms'
 import { createRoomApi, fetchAvailabilityTimes } from '../lib/api'
+import WeatherWidget from '../components/WeatherWidget'
+import { isOutdoorLocation } from '../lib/locationMeta'
 import {
   TYPE_OPTIONS,
   listLocationsForType,
@@ -79,9 +81,51 @@ function isToday(date) {
   )
 }
 
+function formatReadableDate(dateStr) {
+  const date = typeof dateStr === 'string' ? parseDate(dateStr) : dateStr
+  return date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
+}
+
+function SkeletonLine({ width = '100%', height = 12, style }) {
+  return <span className="skeleton skeleton-text" style={{ width, height, ...style }} aria-hidden="true" />
+}
+
+function CreateSkeleton() {
+  return (
+    <div className="page create-page" aria-busy="true">
+      <div className="create-layout">
+        <aside className="create-sidebar" aria-hidden="true">
+          <SkeletonLine width="70%" height={18} />
+          <SkeletonLine width="55%" height={14} style={{ marginTop: 12 }} />
+          <SkeletonLine width="60%" height={14} />
+          <SkeletonLine width="50%" height={14} />
+        </aside>
+        <div className="create-form" aria-hidden="true">
+          <section className="form-section">
+            <SkeletonLine width="30%" height={20} />
+            <div style={{ display: 'grid', gap: '16px', marginTop: '16px' }}>
+              <SkeletonLine height={42} />
+              <SkeletonLine height={42} />
+              <SkeletonLine height={42} />
+            </div>
+          </section>
+          <section className="form-section">
+            <SkeletonLine width="35%" height={20} />
+            <div style={{ display: 'grid', gap: '16px', marginTop: '16px' }}>
+              <SkeletonLine height={42} />
+              <SkeletonLine height={42} />
+              <SkeletonLine height={42} />
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Create() {
   const { studentId } = useAuth()
-  const { rooms, setRooms, refresh, supportsApi } = useRooms()
+  const { rooms, setRooms, refresh, supportsApi, isLoading } = useRooms()
   const nav = useNavigate()
 
   const [name, setName] = useState('')
@@ -101,6 +145,15 @@ export default function Create() {
 
   const calendarRef = useRef(null)
   const dateTriggerRef = useRef(null)
+
+  const agendaEntries = useMemo(() => {
+    if (!selectedDate) return []
+    return rooms
+      .filter(room => typeof room.time === 'string' && room.time.startsWith(`${selectedDate} `))
+      .sort((a, b) => a.time.localeCompare(b.time))
+  }, [rooms, selectedDate])
+
+  const agendaLabel = useMemo(() => (selectedDate ? formatReadableDate(selectedDate) : ''), [selectedDate])
 
   const calendarDays = useMemo(
     () => generateCalendarDays(currentMonth),
@@ -364,6 +417,10 @@ export default function Create() {
     return summary.find(entry => entry.location === location)
   }, [rooms, location])
 
+  if (isLoading) {
+    return <CreateSkeleton />
+  }
+
   return (
     <div className="page create-page">
       <div className="create-layout">
@@ -425,7 +482,7 @@ export default function Create() {
                 clearErrorStatus()
               }}
               onBlur={() => markTouched('name')}
-              placeholder="e.g., Soccer Field A"
+              placeholder="e.g., Tennis Courts"
               aria-invalid={showNameError}
               aria-describedby={nameHintId}
             />
@@ -591,7 +648,26 @@ export default function Create() {
             )}
           </div>
         </div>
-            <div className="row multi time-row">
+        {agendaEntries.length > 0 && (
+          <div className="calendar-agenda" role="status" aria-live="polite">
+            <div className="calendar-agenda-header">{agendaLabel}</div>
+            <ul className="calendar-agenda-list">
+              {agendaEntries.map(entry => {
+                const [_, timePart = '--:--'] = (entry.time || '').split(' ')
+                return (
+                  <li key={entry.id} className="calendar-agenda-item">
+                    <span className="calendar-agenda-time">{timePart}</span>
+                    <span className="calendar-agenda-room">
+                      <strong>{entry.name || 'Untitled session'}</strong>
+                      <span>{entry.location || 'Unknown location'}</span>
+                    </span>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
+        <div className="row multi time-row">
               <div className="field">
                 <label htmlFor="room-time">Time</label>
             <select
@@ -678,6 +754,14 @@ export default function Create() {
             )}
           </div>
             </div>
+          {isOutdoorLocation(location) && (
+            <WeatherWidget
+              variant="form"
+              location={location}
+              date={selectedDate}
+              time={time}
+            />
+          )}
           </section>
           <div className="row end">
             <button type="submit" className="btn btn-primary btn-lg" disabled={!canSubmit}>

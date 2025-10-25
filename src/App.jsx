@@ -7,6 +7,7 @@ import Profile from './pages/Profile'
 import Login from './pages/Login'
 import { AuthProvider, useAuth } from './lib/auth'
 import { RoomsProvider } from './lib/rooms'
+import { ThemeProvider } from './lib/theme.jsx'
 
 function AppInner() {
   const { studentId } = useAuth()
@@ -35,10 +36,12 @@ function AppInner() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <RoomsProvider>
-        <AppInner />
-      </RoomsProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <RoomsProvider>
+          <AppInner />
+        </RoomsProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }

@@ -19,13 +19,16 @@ from backend.utils.utilities import (
 DEFAULT_LOOKAHEAD_DAYS = 7
 DEFAULT_TIMESLOTS = [f"{hour:02d}:{minute:02d}" for hour in range(0, 24) for minute in (0, 30)]
 DEFAULT_COURTS = {
-    "Soccer Field A": (CourtType.SOCCER, 16),
-    "Soccer Field B": (CourtType.SOCCER, 16),
-    "Soccer Field C": (CourtType.SOCCER, 16),
-    "North Field": (CourtType.FOOTBALL, 22),
-    "South Field": (CourtType.FOOTBALL, 22),
-    "Gym Court 1": (CourtType.BASKETBALL, 10),
-    "Gym Court 2": (CourtType.BASKETBALL, 10),
+    "Tennis Courts": (CourtType.TENNIS, 8),
+    "Armington Physical Education Center* ∆": (CourtType.BASKETBALL, 20),
+    "L.C. Boles Golf Course": (CourtType.GOLF, 12),
+    "Cindy Barr Field": (CourtType.FOOTBALL, 24),
+    "Carl W. Dale Soccer Field": (CourtType.SOCCER, 22),
+    "Murray Baseball Field": (CourtType.BASEBALL, 20),
+    "Papp Stadium* ∆": (CourtType.FOOTBALL, 28),
+    "Scot Center* ∆": (CourtType.BASKETBALL, 24),
+    "Softball Diamond": (CourtType.BASEBALL, 18),
+    "Timken Gymnasium*": (CourtType.BASKETBALL, 18),
 }
 
 # Ensure we have an initial set of reservation files.
@@ -43,9 +46,9 @@ def _parse_room_id(room_id: str) -> Tuple[str, str, str]:
         abort(400, description="Invalid room id")
 
 
-def _serialize_entry(entry: dict) -> dict:
+def _serialize_entry(entry: dict, *, include_access_code: bool = False) -> dict:
     time_string = f"{entry['date']} {entry['time']}"
-    return {
+    payload = {
         "id": entry["id"],
         "name": entry.get("room_name") or entry.get("court"),
         "location": entry.get("court"),
@@ -58,6 +61,9 @@ def _serialize_entry(entry: dict) -> dict:
         "participants": entry.get("participants", []),
         "status": entry.get("status", "available"),
     }
+    if include_access_code and entry.get("access_code"):
+        payload["access_code"] = entry.get("access_code")
+    return payload
 
 
 def _ensure_date(date_dt: datetime):
@@ -91,6 +97,7 @@ def _build_entry(date_dt: datetime, court_name: str, timeslot: str) -> dict:
         "privacy": slot.type,
         "duration_min": slot.duration_min,
         "status": slot.status,
+        "access_code": slot.access_code,
     }
 
 
@@ -101,17 +108,23 @@ def health():
 
 @app.get("/api/rooms")
 def list_rooms():
+    student_id = str(request.args.get("student_id", "")).strip()
     entries = list_reservations_between(datetime.now(), DEFAULT_LOOKAHEAD_DAYS)
-    rooms = [_serialize_entry(entry) for entry in entries]
+    rooms = []
+    for entry in entries:
+        include_code = bool(student_id) and entry.get("owner_id") == student_id and entry.get("privacy") == "private"
+        rooms.append(_serialize_entry(entry, include_access_code=include_code))
     return jsonify({"rooms": rooms})
 
 
 @app.get("/api/rooms/<room_id>")
 def get_room(room_id):
+    student_id = str(request.args.get("student_id", "")).strip()
     date_str, court_name, time_str = _parse_room_id(room_id)
     date_dt = datetime.strptime(date_str, "%Y-%m-%d")
     entry = _build_entry(date_dt, court_name, time_str)
-    return jsonify({"room": _serialize_entry(entry)})
+    include_code = entry.get("owner_id") == student_id and entry.get("privacy") == "private"
+    return jsonify({"room": _serialize_entry(entry, include_access_code=include_code)})
 
 
 @app.post("/api/rooms")
@@ -145,6 +158,7 @@ def create_room():
         timeslot_type=(payload.get("privacy") or "public").lower(),
         room_name=payload.get("name"),
         duration_min=int(payload.get("duration", 60) or 60),
+        access_code=payload.get("access_code"),
     )
 
     if not result.get("success"):
@@ -161,12 +175,17 @@ def create_room():
             timeslot_type=result.get("timeslot_type", "public"),
             room_name=result.get("room_name"),
             duration_min=result.get("duration_min") or 60,
+            access_code=result.get("access_code"),
         )
         if not join_result.get("success"):
             abort(409, description=join_result.get("message", "Unable to add participant"))
 
     entry = _build_entry(date_dt, location, slot_part)
-    return jsonify({"room": _serialize_entry(entry)}), 201
+    include_code = bool(result.get("access_code")) and entry.get("privacy") == "private"
+    serialized = _serialize_entry(entry, include_access_code=include_code)
+    if include_code:
+        serialized["access_code"] = result.get("access_code")
+    return jsonify({"room": serialized}), 201
 
 
 @app.post("/api/rooms/<room_id>/attendees")
@@ -187,6 +206,8 @@ def update_attendance(room_id):
     if not slot:
         abort(404, description="Timeslot not found")
 
+    access_code = payload.get("access_code")
+
     if action == "leave":
         result = remove_player_from_timeslot(date_dt, court_name, time_str, student_id)
     else:
@@ -199,6 +220,7 @@ def update_attendance(room_id):
             timeslot_type=slot.type,
             room_name=slot.room_name,
             duration_min=slot.duration_min or 60,
+            access_code=access_code,
         )
 
     if not result.get("success"):
@@ -206,7 +228,8 @@ def update_attendance(room_id):
         abort(status, description=result.get("message", "Unable to update attendance"))
 
     entry = _build_entry(date_dt, court_name, time_str)
-    return jsonify({"room": _serialize_entry(entry)})
+    include_code = entry.get("owner_id") == student_id and entry.get("privacy") == "private"
+    return jsonify({"room": _serialize_entry(entry, include_access_code=include_code)})
 
 
 @app.delete("/api/rooms/<room_id>")
@@ -234,9 +257,25 @@ def delete_room(room_id):
 def profile(student_id):
     sid = (student_id or "").strip()
     entries = list_reservations_between(datetime.now(), DEFAULT_LOOKAHEAD_DAYS)
-    owned = [_serialize_entry(entry) for entry in entries if entry.get("owner_id") == sid]
+    owned = [_serialize_entry(entry, include_access_code=True) for entry in entries if entry.get("owner_id") == sid]
     joined = [_serialize_entry(entry) for entry in entries if sid in entry.get("participants", []) and entry.get("owner_id") != sid]
     return jsonify({"owned": owned, "joined": joined})
+
+
+@app.post("/api/rooms/private-access")
+def private_access_lookup():
+    payload = request.get_json(force=True) or {}
+    access_code = str(payload.get("access_code", "")).strip().upper()
+    if not access_code:
+        abort(400, description="access_code is required")
+
+    entries = list_reservations_between(datetime.now(), DEFAULT_LOOKAHEAD_DAYS)
+    for entry in entries:
+        code = (entry.get("access_code") or "").strip().upper()
+        if code and code == access_code:
+            return jsonify({"room": _serialize_entry(entry)})
+
+    abort(404, description="No room matches that invite code")
 
 
 @app.get("/api/availability/dates")

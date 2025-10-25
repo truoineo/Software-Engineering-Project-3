@@ -1,47 +1,92 @@
-# Scheduling App Frontend (Gradio)
+# Scheduling App (React + Flask)
 
-Single-page scheduling UI that lets students log in, browse available practice rooms, and host new sessions. The interface is built entirely with [Gradio](https://www.gradio.app/) and persists data to a lightweight JSON store, making it easy to demo or extend without extra services.
+Modern single-page scheduling experience that lets students browse athletics facilities, preview locations, and host new sessions. The frontend is built with **React (Vite)** and the backend is a lightweight **Flask** API backed by JSON reservation files. The UI supports rich popovers, modal previews, and fallbacks when the API is offline.
 
 ## Features
-- Student login gate with session banner so actions are tied to an ID.
-- Auto-refreshing room list (every 5 seconds) with inline “Join” controls and privacy indicators.
-- Guided room creation form with location selector, 30/60 minute duration limits, and availability checks.
-- Public/private toggle: public rooms are open to everyone; private rooms only allow the owner to rejoin.
-- Smart time pickers that only expose free slots for the selected location and date.
+- Student login gate so actions are tied to an ID.
+- Auto-sorted lobby with join/leave controls, warning badges, and hover previews for each facility.
+- Click-to-open modal dialog with photos, amenities, and map links.
+- Guided room creation flow with availability checks and new facility catalog (tennis courts, stadiums, etc.).
+- Calendar agenda preview that surfaces same-day sessions directly inside the scheduling flow.
+- Support for additional sports (baseball, golf, tennis) with dedicated iconography.
+- Light/dark theme toggle with animated microinteractions across the interface.
+- Private lobby support: hosts can generate invite codes, share them, and unlock rooms from the join page.
+- Backend JSON storage with automatic regeneration plus browser `localStorage` fallback when offline.
 
-## Quick Start
-```bash
-# 1. (Optional) Create & activate a virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# 2. Install dependencies
-pip install -r requirements.txt
-
-# 3. Launch the Gradio app
-python app.py
+## Project Structure
+```
+.
+├── backend/            # Flask API and storage utilities
+│   ├── app.py          # API entry point
+│   ├── storage/
+│   │   ├── reservations/  # Generated day-by-day JSON data (gitignored)
+│   │   └── storage_template.py
+│   └── utils/          # Helpers for reservations, timeslots, users
+├── public/             # Static assets (location preview images, favicon)
+├── src/                # React application (Vite)
+│   ├── components/     # UI components (LocationPreview, Room cards, etc.)
+│   ├── lib/            # Shared logic (API, schedule helpers, storage)
+│   ├── pages/          # Route-level views (Join, Profile, Create)
+│   └── styles.css      # Global design tokens and theme
+└── README.md
 ```
 
-Gradio prints a local URL (e.g. `http://127.0.0.1:7860`). Open it in a browser to interact with the frontend. Use the “Stop” button in the terminal or press `Ctrl+C` when you are done.
+## Prerequisites
+- **Node.js** (v18+) and **npm**
+- **Python 3.10+**
+- *(Optional)* `python -m venv venv` for an isolated backend environment
 
-## UI Walkthrough
-- **Log In** – Enter any Student ID to unlock the main screen; the header reflects the signed-in user.
-- **Browse & Join** – The join view lists up to 20 rooms with name, start time, duration, and privacy badge; click “Join” to enroll and watch the status panel for feedback.
-- **Create a Room** – Use the “Create” button, fill in the name, visibility, location, date, slot, and duration, then hit “Save”; a success message triggers an automatic refresh of the join list and slot picker.
-- **Private Rooms** – Only the owner can join a private room; others receive a warning and remain on the join view.
+## Quick Start
 
-## Development Notes
-- Main entry point: `app.py` — contains the Gradio layout, event wiring, and business rules.
-- Styling: see `CUSTOM_CSS` inside `app.py` for button sizing and layout tweaks.
-- Locations: update the `LOCATION_OPTIONS` list in `app.py` to add/remove fields.
-- Slot logic: helper functions enforce 30-minute increments and prevent overlapping bookings per location.
+### 1. Install dependencies
+```bash
+# Backend dependencies
+python -m venv venv
+source venv/bin/activate            # Windows: venv\Scripts\activate
+pip install -r requirements.txt
 
-## Data & Storage
-- Persistent data lives in `storage.json`. The app creates and updates it automatically.  
-- Gradio keeps the file in memory while the server runs; manual edits while the app is live may be overwritten.
-- To reset the state, stop the server and delete `storage.json` (it will be recreated on next launch).
+# Frontend dependencies
+npm install
+```
+
+### 2. Launch the backend
+```bash
+source venv/bin/activate            # ensure the venv is active
+python -m backend.app --host 0.0.0.0 --port 5050
+```
+The Flask API listens on `http://127.0.0.1:5050` (matching `VITE_API_BASE_URL` in `.env`). Reservation files are regenerated automatically under `backend/storage/reservations/` if they are missing.
+
+### 3. Launch the frontend
+In a second terminal:
+```bash
+npm run dev
+```
+Vite prints the local URL (usually `http://127.0.0.1:5173`). Open it in the browser while the backend is running to see live data. If the API is unreachable, the app falls back to cached `localStorage` data and shows a status banner.
+
+### 4. Build for production
+```bash
+npm run build        # Generates static assets in dist/
+```
+
+## Developer Notes
+- **Hover overlay**: Implemented in `src/components/LocationLinkWithPreview.jsx` using Floating UI for positioning, with a dedicated preview-image directory at `public/assets/locations/`.
+- **Modal dialog**: Controlled component at `src/components/LocationPreview.jsx` with focus trapping, ESC/backdrop handling, and body scroll lock.
+- **Schedules & facilities**: `src/lib/schedule.js` defines location catalogs, type filters, capacities, and icons.
+- **Backend data model**: `backend/utils/utilities.py` and `backend/storage/storage_template.py` manage timeslots, courts, and JSON serialization.
+- **Resetting data**: Stop the backend and delete the contents of `backend/storage/reservations/`. Restart the Flask server to regenerate fresh files. Clear browser `localStorage` (key `rooms`) to remove cached sessions.
 
 ## Troubleshooting
-- **Dependencies missing?** Re-run `pip install -r requirements.txt` inside the active virtual environment.
-- **Port already in use?** Launch with a custom port: `python app.py --server-port 7861`.
-- **No rooms showing?** Either none exist yet or all violate current filters; try creating one or refreshing the browser.
+- **API fallback banner**: Indicates the frontend could not reach `VITE_API_BASE_URL`; ensure the Flask server is running or adjust `.env`.
+- **Stale reservations after reset**: Clear both the files inside `backend/storage/reservations/` and the browser’s `localStorage` before reloading.
+- **Port conflicts**: Start the backend on a different port via `python -m backend.app --host 0.0.0.0 --port 5051` and update `.env`.
+- **Missing preview images**: Place PNG/JPEG files inside `public/assets/locations/` and update `src/lib/locationAssets.js` accordingly; gradient fallbacks appear if an image is absent.
+
+## Scripts Reference
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the Vite development server |
+| `npm run build` | Build production-ready frontend assets |
+| `python -m backend.app --host 0.0.0.0 --port 5050` | Launch the Flask API |
+| `pip install -r requirements.txt` | Install backend dependencies |
+
+Enjoy hacking on the new scheduling experience! Contributions, bug reports, and facility updates are always welcome.***
