@@ -35,7 +35,15 @@ DEFAULT_COURTS = {
 initialize_reservations_for_next_10_days(DEFAULT_COURTS, DEFAULT_TIMESLOTS)
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+# Allow the frontend to send cookies/credentials during local development.
+# Flask-CORS requires explicit origins when credentials are enabled.
+_frontend_origins = os.environ.get(
+    "FRONTEND_ORIGINS",
+    "http://localhost:5173 http://127.0.0.1:5173 http://localhost:3000 http://127.0.0.1:3000",
+)
+ALLOWED_ORIGINS = [origin.strip() for origin in _frontend_origins.split() if origin.strip()]
+CORS(app, resources={r"/api/*": {"origins": ALLOWED_ORIGINS}}, supports_credentials=True)
 
 
 def _parse_room_id(room_id: str) -> Tuple[str, str, str]:
