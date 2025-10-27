@@ -1,5 +1,5 @@
 import React from 'react'
-import { Moon, Sun } from 'lucide-react'
+import { Moon, Sun, User } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTheme } from '../lib/theme.jsx'
@@ -44,7 +44,7 @@ export default function TopBar({ onCreate, onProfile, onLobby }) {
           onClick={() => onProfile?.() || navigate('/profile')}
           title="Profile"
         >
-          👤
+          <User size={20} strokeWidth={1.8} aria-hidden="true" />
         </button>
       </div>
     </div>

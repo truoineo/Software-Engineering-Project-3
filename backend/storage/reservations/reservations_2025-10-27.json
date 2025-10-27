@@ -1992,13 +1992,15 @@
         "access_code": null
       },
       "13:00": {
-        "players_id": [],
+        "players_id": [
+          "1234567"
+        ],
         "status": "available",
-        "type": "public",
-        "owner_id": null,
-        "room_name": null,
-        "duration_min": null,
-        "access_code": null
+        "type": "private",
+        "owner_id": "1234567",
+        "room_name": "test",
+        "duration_min": 60,
+        "access_code": "5EJ8KK"
       },
       "13:30": {
         "players_id": [],
@@ -2055,12 +2057,14 @@
         "access_code": null
       },
       "16:30": {
-        "players_id": [],
+        "players_id": [
+          "1234567"
+        ],
         "status": "available",
         "type": "public",
-        "owner_id": null,
-        "room_name": null,
-        "duration_min": null,
+        "owner_id": "1234567",
+        "room_name": "room3",
+        "duration_min": 60,
         "access_code": null
       },
       "17:00": {
