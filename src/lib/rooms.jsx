@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { loadRooms, saveRooms, ROOMS_UPDATED_EVENT } from './storage'
+import { loadRooms, saveRooms, saveRoomsSilent, ROOMS_UPDATED_EVENT } from './storage'
 import { fetchRoomsFromApi } from './api'
 import { useAuth } from './auth'
 
@@ -12,16 +12,25 @@ export function RoomsProvider({ children }) {
   const [supportsApi, setSupportsApi] = useState(true)
   const [error, setError] = useState(null)
   const isSyncingRef = useRef(false)
+  const storageDebounceRef = useRef(null)
+  const lastStorageSyncAtRef = useRef(0)
+  const abortRef = useRef(null)
 
   const syncFromStorage = useCallback(async () => {
     if (isSyncingRef.current) return
     isSyncingRef.current = true
     setIsLoading(true)
     try {
-      const fromApi = await fetchRoomsFromApi(studentId)
+      // Cancel any in-flight request when switching users
+      if (abortRef.current) {
+        try { abortRef.current.abort() } catch {}
+      }
+      abortRef.current = new AbortController()
+      const fromApi = await fetchRoomsFromApi(studentId, abortRef.current.signal)
       setSupportsApi(true)
       setRoomsState(fromApi)
-      saveRooms(fromApi)
+      // Persist without re-broadcasting to avoid triggering our own listener
+      saveRoomsSilent(fromApi)
       setError(null)
     } catch (err) {
       console.warn('Falling back to local storage for rooms', err)
@@ -38,12 +47,23 @@ export function RoomsProvider({ children }) {
   useEffect(() => {
     if (typeof window === 'undefined') return
     syncFromStorage()
-    const handle = () => { syncFromStorage() }
-    window.addEventListener('storage', handle)
-    window.addEventListener(ROOMS_UPDATED_EVENT, handle)
+    const handleStorage = (event) => {
+      if (event && event.key && event.key !== 'rooms') return
+      const now = Date.now()
+      if (now - lastStorageSyncAtRef.current < 1500) return
+      if (storageDebounceRef.current) clearTimeout(storageDebounceRef.current)
+      storageDebounceRef.current = setTimeout(() => {
+        lastStorageSyncAtRef.current = Date.now()
+        syncFromStorage()
+      }, 150)
+    }
+    const handleRoomsUpdated = () => { syncFromStorage() }
+    window.addEventListener('storage', handleStorage)
+    window.addEventListener(ROOMS_UPDATED_EVENT, handleRoomsUpdated)
     return () => {
-      window.removeEventListener('storage', handle)
-      window.removeEventListener(ROOMS_UPDATED_EVENT, handle)
+      window.removeEventListener('storage', handleStorage)
+      window.removeEventListener(ROOMS_UPDATED_EVENT, handleRoomsUpdated)
+      if (storageDebounceRef.current) clearTimeout(storageDebounceRef.current)
     }
   }, [syncFromStorage])
 

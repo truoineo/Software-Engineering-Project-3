@@ -95,11 +95,25 @@ export function loadRooms() {
   }
 }
 
+function writeIfChanged(nextArray, { emit } = { emit: false }) {
+  const next = JSON.stringify(nextArray)
+  const prev = localStorage.getItem(STORAGE_KEY)
+  if (prev === next) return nextArray
+  localStorage.setItem(STORAGE_KEY, next)
+  if (emit) emitRoomsUpdated()
+  return nextArray
+}
+
 export function saveRooms(rooms) {
   const safeRooms = sanitizeRooms(rooms)
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(safeRooms))
-  emitRoomsUpdated()
-  return safeRooms
+  return writeIfChanged(safeRooms, { emit: true })
+}
+
+// Internal helper to persist without broadcasting an update event.
+// Useful for syncing from the server to avoid feedback loops in listeners.
+export function saveRoomsSilent(rooms) {
+  const safeRooms = sanitizeRooms(rooms)
+  return writeIfChanged(safeRooms, { emit: false })
 }
 
 export function upsertRoom(room) {

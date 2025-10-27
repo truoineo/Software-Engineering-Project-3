@@ -42,11 +42,11 @@ async function request(path, options = {}) {
   return data
 }
 
-export async function fetchRoomsFromApi(studentId) {
+export async function fetchRoomsFromApi(studentId, signal) {
   const params = new URLSearchParams()
   if (studentId) params.append('student_id', studentId)
   const suffix = params.toString() ? `?${params.toString()}` : ''
-  const data = await request(`/rooms${suffix}`, { method: 'GET' })
+  const data = await request(`/rooms${suffix}`, { method: 'GET', signal })
   return data?.rooms || []
 }
 

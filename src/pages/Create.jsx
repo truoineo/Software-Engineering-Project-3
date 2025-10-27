@@ -136,6 +136,7 @@ export default function Create() {
   const [capacity, setCapacity] = useState(() => String(getCapacityForType(DEFAULT_TYPE)))
   const [time, setTime] = useState('')
   const [status, setStatus] = useState({ type: '', message: '' })
+  const [inviteNotice, setInviteNotice] = useState(null)
   const [selectedDate, setSelectedDate] = useState(() => formatDate(new Date()))
   const [currentMonth, setCurrentMonth] = useState(() => startOfMonth(new Date()))
   const [touched, setTouched] = useState({ name: false, location: false, time: false, capacity: false })
@@ -363,13 +364,21 @@ export default function Create() {
 
     let savedOffline = !supportsApi
 
+    const isPrivate = payload.privacy === 'private'
+
     if (supportsApi) {
       try {
-        await createRoomApi(payload)
+        const created = await createRoomApi(payload)
         await refresh()
         const typeLabel = getTypeLabel(sportType)
-        setSuccess(`Created ${privacy} ${typeLabel} room '${name.trim()}' on ${selectedDate} at ${time} (${durationMinutes}m, cap ${capacityNumber}).`)
-        setTimeout(() => nav('/join'), 600)
+        const code = isPrivate ? (created?.access_code || '') : ''
+        if (isPrivate && code) {
+          setInviteNotice({ code: String(code).toUpperCase() })
+        }
+        setSuccess(`Created ${privacy} ${typeLabel} room '${name.trim()}' on ${selectedDate} at ${time} (${durationMinutes}m, cap ${capacityNumber}).${isPrivate && code ? ' Invite code shown below.' : ''}`)
+        if (!isPrivate || !code) {
+          setTimeout(() => nav('/join'), 800)
+        }
         return
       } catch (err) {
         console.warn('API create failed, using offline storage', err)
@@ -380,6 +389,13 @@ export default function Create() {
     const localRoom = {
       id: crypto.randomUUID(),
       ...payload,
+    }
+
+    // Generate an invite code for private rooms when saving offline
+    if (isPrivate && !localRoom.access_code) {
+      const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+      const code = Array.from({ length: 6 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join('')
+      localRoom.access_code = code
     }
 
     let conflict = false
@@ -395,8 +411,14 @@ export default function Create() {
 
     const typeLabel = getTypeLabel(sportType)
     const offlineNote = savedOffline ? ' (saved offline)' : ''
-    setSuccess(`Created ${privacy} ${typeLabel} room '${localRoom.name}' on ${selectedDate} at ${time} (${durationMinutes}m, cap ${capacityNumber})${offlineNote}.`)
-    setTimeout(() => nav('/join'), 600)
+    const code = isPrivate ? (localRoom?.access_code || '') : ''
+    if (isPrivate && code) {
+      setInviteNotice({ code: String(code).toUpperCase() })
+    }
+    setSuccess(`Created ${privacy} ${typeLabel} room '${localRoom.name}' on ${selectedDate} at ${time} (${durationMinutes}m, cap ${capacityNumber})${offlineNote}.${isPrivate && code ? ' Invite code shown below.' : ''}`)
+    if (!isPrivate || !code) {
+      setTimeout(() => nav('/join'), 800)
+    }
   }
 
   const nameHintId = showNameError ? 'room-name-hint' : undefined
@@ -775,6 +797,27 @@ export default function Create() {
           )}
         </form>
       </div>
+      {inviteNotice && (
+        <div className="location-modal-backdrop" role="dialog" aria-modal="true" aria-label="Invite code">
+          <div className="location-modal">
+            <button className="location-modal-close" aria-label="Close" onClick={() => { setInviteNotice(null); nav('/join') }}>×</button>
+            <div className="location-modal-content">
+              <h3>Private room created</h3>
+              <p>Your invite code:</p>
+              <p style={{ fontSize: 24, fontWeight: 700, letterSpacing: '0.08em' }}>{inviteNotice.code}</p>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  className="btn btn-primary"
+                  onClick={async () => {
+                    try { await navigator.clipboard?.writeText?.(inviteNotice.code) } catch {}
+                  }}
+                >Copy code</button>
+                <button className="btn btn-ghost" onClick={() => { setInviteNotice(null); nav('/join') }}>Go to rooms</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

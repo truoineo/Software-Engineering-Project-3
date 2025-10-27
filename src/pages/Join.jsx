@@ -33,6 +33,7 @@ export default function Join(){
   const [inviteLookup, setInviteLookup] = useState(null)
   const [inviteError, setInviteError] = useState('')
   const [inviteLoading, setInviteLoading] = useState(false)
+  const [dateFilter, setDateFilter] = useState('')
   const HEATMAP_WINDOW_DAYS = 21
 
   const unlockedRoom = inviteLookup?.room || null
@@ -45,42 +46,54 @@ export default function Join(){
     ...TYPE_OPTIONS,
   ], [])
 
+  // heatmap moved below after publicRooms is defined
+
+  const sortedRooms = useMemo(() => {
+    return [...rooms].sort((a, b) => a.time.localeCompare(b.time))
+  }, [rooms])
+
+  // Visible rooms include all public rooms plus private rooms
+  // that the current user owns or has joined.
+  const visibleRooms = useMemo(
+    () => sortedRooms.filter(r => {
+      const privacy = (r.privacy || 'public').toLowerCase()
+      if (privacy !== 'private') return true
+      const isOwner = (r.owner_id || '') === (studentId || '')
+      const joined = Array.isArray(r.participants) && r.participants.includes(studentId)
+      return isOwner || joined
+    }),
+    [sortedRooms, studentId]
+  )
+
   const heatmap = useMemo(() => {
     const days = listAvailableDates(HEATMAP_WINDOW_DAYS)
+    const relevantRooms = (typeFilter === 'all'
+      ? visibleRooms
+      : visibleRooms.filter(r => (r.type || 'general') === typeFilter))
     const counts = days.map(date => {
-      const count = rooms.filter(room => (room.time || '').startsWith(date)).length
+      const count = relevantRooms.filter(room => (room.time || '').startsWith(date)).length
       return { date, count }
     })
-    const peak = Math.max(...counts.map(c => c.count), 1)
     return counts.map(({ date, count }) => {
-      const ratio = peak === 0 ? 0 : count / peak
-      let level = 0
-      if (count > 0) {
-        if (ratio < 0.34) level = 1
-        else if (ratio < 0.67) level = 2
-        else level = 3
-      }
+      const level = count > 0 ? 1 : 0
       const d = new Date(`${date}T00:00:00`)
       const label = d.toLocaleDateString(undefined, { weekday: 'short' })
       const displayDate = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
       const countLabel = count === 0 ? 'No rooms' : `${count} room${count === 1 ? '' : 's'}`
       return { date, count, level, label, displayDate, countLabel }
     })
-  }, [rooms, HEATMAP_WINDOW_DAYS])
-
-  const sortedRooms = useMemo(() => {
-    return [...rooms].sort((a, b) => a.time.localeCompare(b.time))
-  }, [rooms])
-
-  const publicRooms = useMemo(
-    () => sortedRooms.filter(r => (r.privacy || 'public') !== 'private'),
-    [sortedRooms]
-  )
+  }, [visibleRooms, typeFilter, HEATMAP_WINDOW_DAYS])
 
   const filteredRooms = useMemo(() => {
-    if (typeFilter === 'all') return publicRooms
-    return publicRooms.filter(r => (r.type || 'general') === typeFilter)
-  }, [publicRooms, typeFilter])
+    let result = visibleRooms
+    if (typeFilter !== 'all') {
+      result = result.filter(r => (r.type || 'general') === typeFilter)
+    }
+    if (dateFilter) {
+      result = result.filter(r => (r.time || '').startsWith(dateFilter))
+    }
+    return result
+  }, [visibleRooms, typeFilter, dateFilter])
 
   const warningLocations = useMemo(() => {
     const summary = summarizeLocationLoad(sortedRooms)
@@ -216,6 +229,16 @@ export default function Join(){
       <div className="availability-heatmap" aria-label="Upcoming room availability heatmap">
         <div className="heatmap-header">
           <span>Upcoming activity</span>
+          {dateFilter && (
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={() => setDateFilter('')}
+              aria-label="Clear date filter"
+            >
+              Clear
+            </button>
+          )}
         </div>
         <div className={`heatmap-grid ${isLoading ? 'is-loading' : ''}`}>
           {isLoading
@@ -229,8 +252,15 @@ export default function Join(){
             : heatmap.map(day => (
               <div
                 key={day.date}
-                className={`heatmap-cell level-${day.level}`}
-                aria-label={`${day.displayDate}: ${day.countLabel}`}
+                role="button"
+                tabIndex={0}
+                onClick={() => setDateFilter(prev => prev === day.date ? '' : day.date)}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setDateFilter(prev => prev === day.date ? '' : day.date) } }}
+                className={`heatmap-cell level-${day.level} ${dateFilter === day.date ? 'is-selected' : ''}`}
+                aria-label={`${day.displayDate}: ${day.countLabel}. Click to filter by this day.`}
+                aria-pressed={dateFilter === day.date}
+                style={{ cursor: 'pointer' }}
+                title={dateFilter === day.date ? 'Selected day – click to clear' : 'Click to filter by this day'}
               >
                 <span className="heatmap-day">{day.label}</span>
                 <span className="heatmap-date">{day.displayDate}</span>
