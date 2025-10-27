@@ -13,7 +13,6 @@ class CourtType(str, Enum):
     TENNIS = "Tennis"
     VOLLEYBALL = "Volleyball"
 
-
 # --- User model ---
 class User(BaseModel):
     name: str
@@ -39,6 +38,8 @@ class TimeSlot(BaseModel):
     room_name: str | None = None
     duration_min: int | None = None
     access_code: str | None = None
+    reservation_name: str = ""  # Optional forward-facing session title supplied by hosts
+    court_type: str = ""  # Optional activity label supplied by hosts
 
 
 # --- CourtReservations model ---
