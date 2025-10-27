@@ -1,6 +1,4 @@
-"""
-Utility functions for managing daily reservation files
-"""
+"""Utility helpers for reservations and user registration."""
 
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -8,13 +6,29 @@ import json
 import re
 from typing import Optional, Literal
 import sys
+import random
 
-# Add parent directory to path for imports
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from storage.storage_template import DailyReservations, CourtReservations, TimeSlot, Users, User
+from storage.storage_template import (
+    DailyReservations,
+    CourtReservations,
+    TimeSlot,
+    CourtType,
+    Users,
+    User,
+)
 
-# Storage directory
+
+def generate_access_code(length: int = 6) -> str:
+    """Generate a human-friendly access code (avoids ambiguous characters)."""
+    alphabet = "ABCDEFGHJKMNPQRSTVWXYZ23456789"
+    return "".join(random.choice(alphabet) for _ in range(length))
+
+
+# Storage directories
 STORAGE_DIR = Path(__file__).parent.parent / "storage"
+RESERVATIONS_DIR = STORAGE_DIR / "reservations"
 USERS_FILE = STORAGE_DIR / "users.json"
 
 
@@ -46,7 +60,7 @@ def load_users() -> Optional[Users]:
         return None
     
     try:
-        with open(USERS_FILE, 'r') as f:
+        with USERS_FILE.open("r") as f:
             data = json.load(f)
         return Users.model_validate(data)
     except Exception as e:
@@ -65,10 +79,9 @@ def save_users(users: Users) -> bool:
         True if successful, False otherwise
     """
     try:
-        # Ensure storage directory exists
         STORAGE_DIR.mkdir(parents=True, exist_ok=True)
-        
-        with open(USERS_FILE, 'w') as f:
+
+        with USERS_FILE.open("w") as f:
             json.dump(users.model_dump(), f, indent=2)
         return True
     except Exception as e:
@@ -132,7 +145,7 @@ def get_reservation_filename(date: datetime) -> str:
 
 def get_reservation_filepath(date: datetime) -> Path:
     """Get the full path to a date's reservation file"""
-    return STORAGE_DIR / get_reservation_filename(date)
+    return RESERVATIONS_DIR / get_reservation_filename(date)
 
 
 def load_daily_reservations(date: datetime) -> Optional[DailyReservations]:
@@ -151,7 +164,7 @@ def load_daily_reservations(date: datetime) -> Optional[DailyReservations]:
         return None
     
     try:
-        with open(filepath, 'r') as f:
+        with filepath.open("r") as f:
             data = json.load(f)
         return DailyReservations.model_validate(data)
     except Exception as e:
@@ -171,12 +184,11 @@ def save_daily_reservations(date: datetime, reservations: DailyReservations) -> 
         True if successful, False otherwise
     """
     filepath = get_reservation_filepath(date)
-    
+
     try:
-        # Ensure storage directory exists
-        STORAGE_DIR.mkdir(parents=True, exist_ok=True)
-        
-        with open(filepath, 'w') as f:
+        RESERVATIONS_DIR.mkdir(parents=True, exist_ok=True)
+
+        with filepath.open("w") as f:
             json.dump(reservations.model_dump(), f, indent=2)
         return True
     except Exception as e:
@@ -191,14 +203,14 @@ def cleanup_old_reservations() -> int:
     Returns:
         Number of files deleted
     """
-    if not STORAGE_DIR.exists():
+    if not RESERVATIONS_DIR.exists():
         return 0
     
     today = datetime.now().date()
     deleted_count = 0
     
     # Find all reservation files
-    for filepath in STORAGE_DIR.glob("reservations_*.json"):
+    for filepath in RESERVATIONS_DIR.glob("reservations_*.json"):
         try:
             # Extract date from filename
             filename = filepath.stem  # "reservations_2025-10-21"
@@ -217,59 +229,64 @@ def cleanup_old_reservations() -> int:
 
 
 def initialize_reservations_for_next_10_days(
-    courts: dict[str, int],
-    timeslots: list[str]
+    courts: dict[str, tuple[CourtType, int]],
+    timeslots: list[str],
 ) -> int:
-    """
-    Create reservation files for the next 10 days if they don't exist.
-    
-    Args:
-        courts: Dictionary of court_name -> capacity
-                Example: {"Court A": 4, "Court B": 6}
-        timeslots: List of timeslot strings in HH:MM format
-                   Example: ["09:00", "11:00", "14:00", "18:00"]
-    
-    Returns:
-        Number of files created
-    """
+    """Ensure reservation files exist for the next 10 days."""
     created_count = 0
     today = datetime.now().date()
-    
+
     for days_ahead in range(10):
         target_date = datetime.combine(today + timedelta(days=days_ahead), datetime.min.time())
         filepath = get_reservation_filepath(target_date)
-        
-        # Skip if file already exists
         if filepath.exists():
             continue
-        
-        # Create new daily reservations
+
         courts_data = {}
-        for court_name, capacity in courts.items():
-            # Create empty timeslots with default values
+        for court_name, (court_type, capacity) in courts.items():
             timeslots_data = {
-                time: TimeSlot(
-                    players_id=[], 
-                    status="available", 
-                    type="public", 
-                    reservation_name="",
-                    court_type=""
-                )
+                time: TimeSlot(players_id=[], status="available", type="public")
                 for time in timeslots
             }
-            
             courts_data[court_name] = CourtReservations(
+                type=court_type,
                 capacity=capacity,
-                timeslots=timeslots_data
+                timeslots=timeslots_data,
             )
-        
+
         reservations = DailyReservations(courts_data)
-        
         if save_daily_reservations(target_date, reservations):
             created_count += 1
             print(f"Created reservation file for {target_date.date()}")
-    
+
     return created_count
+
+
+def ensure_reservations_for_date(
+    date: datetime,
+    courts: dict[str, tuple[CourtType, int]],
+    timeslots: list[str],
+) -> DailyReservations:
+    """Ensure there is a reservation file for the given date and return it."""
+    reservations = load_daily_reservations(date)
+    if reservations:
+        return reservations
+
+    courts_data = {}
+    for court_name, (court_type, capacity) in courts.items():
+        timeslots_data = {
+            time: TimeSlot(players_id=[], status="available", type="public")
+            for time in timeslots
+        }
+        courts_data[court_name] = CourtReservations(
+            type=court_type,
+            capacity=capacity,
+            timeslots=timeslots_data,
+        )
+
+    reservations = DailyReservations(courts_data)
+    save_daily_reservations(date, reservations)
+    return reservations
 
 
 def sync_timeslot_status(timeslot: TimeSlot, capacity: int) -> None:
@@ -291,10 +308,13 @@ def add_player_to_timeslot(
     court_name: str,
     timeslot: str,
     user_id: str,
-    user_name: str  | None,
+    user_name: str | None,
     timeslot_type: Literal["private", "public"] = "public",
+    room_name: str | None = None,
+    duration_min: int | None = None,
+    access_code: str | None = None,
     reservation_name: str = "",
-    court_type: str = ""
+    court_type_label: str = "",
 ) -> dict:
     """
     Add a player to a specific timeslot and auto-update status.
@@ -348,15 +368,34 @@ def add_player_to_timeslot(
         return {"success": False, "message": "Timeslot is full"}
     
     # Check if trying to join a private timeslot
+    normalized_code = (access_code or "").strip().upper() or None
+
     if slot.type == "private" and len(slot.players_id) > 0:
-        return {"success": False, "message": "This is a private timeslot"}
+        if not normalized_code or slot.access_code != normalized_code:
+            return {"success": False, "message": "Invalid or missing access code for this private room."}
     
     # Set type, reservation name, and court type if this is the first player
     is_first_player = len(slot.players_id) == 0
     if is_first_player:
         slot.type = timeslot_type
-        slot.reservation_name = reservation_name
-        slot.court_type = court_type
+        slot.owner_id = user_id
+        slot.room_name = (room_name or reservation_name or f"{court_name} {timeslot}")
+        slot.duration_min = duration_min
+        slot.reservation_name = reservation_name or slot.reservation_name
+        slot.court_type = court_type_label or slot.court_type
+        if timeslot_type == "private":
+            slot.access_code = normalized_code or generate_access_code()
+        else:
+            slot.access_code = None
+    else:
+        if not slot.room_name and room_name:
+            slot.room_name = room_name
+        if reservation_name and not slot.reservation_name:
+            slot.reservation_name = reservation_name
+        if court_type_label and not slot.court_type:
+            slot.court_type = court_type_label
+        if slot.type == "private" and slot.access_code:
+            normalized_code = slot.access_code
     
     # Add player
     slot.players_id.append(user_id)
@@ -375,15 +414,20 @@ def add_player_to_timeslot(
             "court_type": slot.court_type,
             "current_players": len(slot.players_id),
             "capacity": court.capacity,
-            "user_name": user_data.get("name", "Unknown")
+            "user_name": user_data.get("name", "Unknown"),
+            "room_name": slot.room_name,
+            "owner_id": slot.owner_id,
+            "duration_min": slot.duration_min or 60,
         }
         
         if is_first_player:
             result["message"] += f" (Set as {timeslot_type})"
-            if reservation_name:
-                result["message"] += f" - '{reservation_name}'"
-            if court_type:
-                result["message"] += f" ({court_type})"
+            if slot.type == "private" and slot.access_code:
+                result["access_code"] = slot.access_code
+            if slot.reservation_name:
+                result["message"] += f" - '{slot.reservation_name}'"
+            if slot.court_type:
+                result["message"] += f" ({slot.court_type})"
         
         if is_new_user:
             result["new_user_registered"] = True
@@ -433,6 +477,17 @@ def remove_player_from_timeslot(
     
     # Remove player
     slot.players_id.remove(user_id)
+
+    # If owner leaves, promote next participant or reset metadata
+    if slot.owner_id == user_id:
+        slot.owner_id = slot.players_id[0] if slot.players_id else None
+        if not slot.owner_id:
+            slot.room_name = None
+            slot.type = "public"
+            slot.duration_min = None
+            slot.access_code = None
+            slot.reservation_name = ""
+            slot.court_type = ""
     
     # Auto-update status
     sync_timeslot_status(slot, court.capacity)
@@ -444,21 +499,90 @@ def remove_player_from_timeslot(
             "message": f"Successfully left {court_name} at {timeslot}",
             "status": slot.status,
             "current_players": len(slot.players_id),
-            "capacity": court.capacity
+            "capacity": court.capacity,
+            "owner_id": slot.owner_id,
+            "room_name": slot.room_name,
         }
     else:
         return {"success": False, "message": "Error saving reservation"}
+
+
+def clear_timeslot(
+    date: datetime,
+    court_name: str,
+    timeslot: str,
+) -> dict:
+    """Reset a timeslot to its default state."""
+    reservations = load_daily_reservations(date)
+    if not reservations:
+        return {"success": False, "message": "No reservations found for this date"}
+
+    court = reservations.root.get(court_name)
+    if not court:
+        return {"success": False, "message": f"Court '{court_name}' not found"}
+
+    slot = court.timeslots.get(timeslot)
+    if not slot:
+        return {"success": False, "message": f"Timeslot '{timeslot}' not found"}
+
+    slot.players_id = []
+    slot.status = "available"
+    slot.type = "public"
+    slot.owner_id = None
+    slot.room_name = None
+    slot.duration_min = None
+    slot.access_code = None
+    slot.reservation_name = ""
+    slot.court_type = ""
+
+    if save_daily_reservations(date, reservations):
+        return {"success": True}
+    return {"success": False, "message": "Error saving reservation"}
+
+
+def list_reservations_between(start_date: datetime, days: int = 7) -> list[dict]:
+    """Return a list of reservation summaries for the given date range."""
+    results: list[dict] = []
+    for offset in range(days):
+        current = start_date + timedelta(days=offset)
+        reservations = load_daily_reservations(current)
+        if not reservations:
+            continue
+        date_str = current.strftime("%Y-%m-%d")
+        for court_name, court in reservations.root.items():
+            for time_str, slot in court.timeslots.items():
+                if not slot.owner_id and not slot.room_name and not slot.players_id:
+                    continue
+                results.append(
+                    {
+                        "id": f"{date_str}|{court_name}|{time_str}",
+                        "date": date_str,
+                        "time": time_str,
+                        "court": court_name,
+                        "court_type": court.type.value,
+                        "capacity": court.capacity,
+                        "participants": slot.players_id,
+                        "owner_id": slot.owner_id,
+                        "room_name": slot.room_name,
+                        "privacy": slot.type,
+                        "duration_min": slot.duration_min,
+                        "status": slot.status,
+                        "access_code": slot.access_code,
+                        "reservation_name": slot.reservation_name,
+                        "activity_label": slot.court_type,
+                    }
+                )
+    return results
 
 
 # Example usage and testing
 if __name__ == "__main__":
     print("🧪 Testing utilities...\n")
     
-    # Define your courts (now just capacity per court)
     courts_config = {
-        "Court A": 4,
-        "Court B": 4,
-        "Court C": 6,
+        "Court A": (CourtType.BASKETBALL, 4),
+        "Court B": (CourtType.TENNIS, 4),
+        "Court C": (CourtType.VOLLEYBALL, 6),
     }
     
     # Define timeslots
@@ -473,20 +597,20 @@ if __name__ == "__main__":
     print("👤 Testing add player...")
     today = datetime.now()
     result = add_player_to_timeslot(
-        today, 
-        "Court A", 
-        "09:00", 
-        "1218347", 
-        user_name="Huy", 
+        today,
+        "Court A",
+        "09:00",
+        "1218347",
+        user_name="Huy",
         timeslot_type="private",
+        room_name="Practice Session",
+        duration_min=90,
         reservation_name="Practice Session",
-        court_type="5v5 Basketball"
+        court_type_label="5v5 Basketball",
     )
     print(f"   {result['message']}")
-    if result.get("reservation_name"):
-        print(f"   Reservation: {result['reservation_name']}")
-    if result.get("court_type"):
-        print(f"   Court Type: {result['court_type']}")
+    if result.get("access_code"):
+        print(f"   Invite code: {result['access_code']}")
     
     # Clean up old files
     print("\n🧹 Cleaning up old reservation files...")

@@ -1,0 +1,3902 @@
+{
+  "Tennis Courts": {
+    "type": "Tennis",
+    "capacity": 8,
+    "timeslots": {
+      "00:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "00:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      }
+    }
+  },
+  "Armington Physical Education Center* \u2206": {
+    "type": "Basketball",
+    "capacity": 20,
+    "timeslots": {
+      "00:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "00:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      }
+    }
+  },
+  "L.C. Boles Golf Course": {
+    "type": "Golf",
+    "capacity": 12,
+    "timeslots": {
+      "00:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "00:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      }
+    }
+  },
+  "Cindy Barr Field": {
+    "type": "Football",
+    "capacity": 24,
+    "timeslots": {
+      "00:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "00:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      }
+    }
+  },
+  "Carl W. Dale Soccer Field": {
+    "type": "Soccer",
+    "capacity": 22,
+    "timeslots": {
+      "00:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "00:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      }
+    }
+  },
+  "Murray Baseball Field": {
+    "type": "Baseball",
+    "capacity": 20,
+    "timeslots": {
+      "00:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "00:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      }
+    }
+  },
+  "Papp Stadium* \u2206": {
+    "type": "Football",
+    "capacity": 28,
+    "timeslots": {
+      "00:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "00:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      }
+    }
+  },
+  "Scot Center* \u2206": {
+    "type": "Basketball",
+    "capacity": 24,
+    "timeslots": {
+      "00:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "00:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      }
+    }
+  },
+  "Softball Diamond": {
+    "type": "Baseball",
+    "capacity": 18,
+    "timeslots": {
+      "00:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "00:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      }
+    }
+  },
+  "Timken Gymnasium*": {
+    "type": "Basketball",
+    "capacity": 18,
+    "timeslots": {
+      "00:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "00:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "01:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "02:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "03:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "04:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "05:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "06:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "07:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "08:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "09:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "10:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "11:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "12:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "13:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "14:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "15:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "16:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "17:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "18:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "19:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "20:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "21:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "22:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:00": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      },
+      "23:30": {
+        "players_id": [],
+        "status": "available",
+        "type": "public",
+        "owner_id": null,
+        "room_name": null,
+        "duration_min": null
+      }
+    }
+  }
+}
